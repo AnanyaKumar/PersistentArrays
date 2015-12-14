@@ -8,7 +8,7 @@
 import java.util.*;
 import java.lang.System;
 
-public class ArrayTest {
+public class ArrayUnitTest {
   // boundary case test (use array of size 1)
   public static void small_get_test() {
     int size = 1;

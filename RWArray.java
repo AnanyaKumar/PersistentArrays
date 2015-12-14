@@ -12,9 +12,9 @@
  */
 
 public class RWArray<T> {
-  private int capacity;
-  private int size;
-  private T[] data;
+  private volatile int capacity;
+  private volatile int size;
+  private volatile T[] data;
 
   public RWArray() {
     this.capacity = 10;

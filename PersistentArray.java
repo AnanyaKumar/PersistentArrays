@@ -17,7 +17,7 @@
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PersistentArray<T> {
+public class PersistentArray<T> implements ArrayInterface<T> {
   private class UndoLog {
     int version_before_change;
     T old_value;
@@ -64,13 +64,18 @@ public class PersistentArray<T> {
     }
   }
 
+  public int size() {
+    return this.size;
+  }
+
   public PersistentArray<T> set(int pos, T elem) {
     PersistentArray<T> new_array = new PersistentArray<T>(this.data, 
       this.version + 1, this.size);
 
     // If old version, or if array data is holding too many versions
-    if (!this.data.latest_version.compareAndSet(this.version, new_array.version)
-        || new_array.version % size == 0) {
+    if (this.data.latest_version.get() != this.version ||
+        !this.data.latest_version.compareAndSet(this.version, new_array.version)
+        || new_array.version % (10 * this.size) == 0) {
       new_array.data = new ArrayData(new_array.size, new_array.version);
       for (int i = 0; i < size; i++) { // In parallel
         new_array.data.values[i] = this.get(i);
@@ -94,29 +99,21 @@ public class PersistentArray<T> {
 
   public T get(int pos) {
     T guess_value = this.data.values[pos];
+    // We check the version after getting the value to avoid
+    // a time of check, time of use issue.
+    if (this.data.latest_version.get() == this.version) {
+      return guess_value;
+    }
+
+    // If we don't have the latest version, binary search 
+    // undo_list until we find undolog with the smallest 
+    // version >= our version. We want the corresponding value.
     RWArray<UndoLog> undo_list = this.data.undo_lists.get(pos);
-    if (undo_list.size() == 0) {
-      // If undo_list is empty, guess_value corresponds to the 
-      // version we want. If someone wrote to this cell of the
-      // array after our version, then undo_list would contain
-      // an undo record. Note that this is because we update 
-      // data.undo_lists before data.values in .set
-      return guess_value;
-    }
-    int undo_list_size = undo_list.size();
-    UndoLog top_undo = undo_list.get(undo_list_size-1);
-    if (top_undo.version_before_change < this.version) {
-      // TODO: explain rationale for this code.
-      return guess_value;
-    }
-    
-    // If the previous two checks failed, we know that we do
-    // not correspond to the latest version of this.data
-    // Binary search undo_list until we find undolog with
-    // the smallest version >= our version. We want the
-    // corresponding value.
     int lower = 0;
-    int upper = undo_list_size - 1;
+    int upper = undo_list.size() - 1;
+    if (upper == -1 || undo_list.get(upper).version_before_change < this.version) {
+      return guess_value;
+    }
     while (lower < upper) {
       int mid = (lower + upper) / 2;
       UndoLog undo_log = undo_list.get(mid);
