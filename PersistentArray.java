@@ -9,6 +9,12 @@
  * Complexities do not depend on the number of 
  * threads using the structure because of the 
  * wait-free approach.
+ * 
+ * Note that we avoid memory barriers in the
+ * implementation of PersistentArray by using
+ * the fact that RWArray method calls act as
+ * memory barriers (on top of performing their
+ * intended functionality).
  *
  * @author Ananya Kumar
  *
@@ -88,6 +94,9 @@ public class PersistentArray<T> implements ArrayInterface<T> {
       T old_value = new_array.data.values[pos];
       new_array.data.undo_lists.get(pos).push_back(
         new UndoLog(this.version, old_value));
+      // There's an implicit memory barrier here from push_back
+      // in RWArray, which ensures that pushing the undo log
+      // happens before setting new_array.data.values[pos]
     }
 
     // We don't need to push an undo log if we created a
@@ -101,6 +110,10 @@ public class PersistentArray<T> implements ArrayInterface<T> {
     T guess_value = this.data.values[pos];
     // We check the version after getting the value to avoid
     // a time of check, time of use issue.
+    // latest_version is an AtomicInteger, so there is an implicit
+    // memory barrier here that ensures we loaded guess_value before
+    // we loaded latest_version. this.version is immutable, so the
+    // order in which we load it does not matter.
     if (this.data.latest_version.get() == this.version) {
       return guess_value;
     }

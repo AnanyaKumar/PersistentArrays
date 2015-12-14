@@ -6,13 +6,16 @@
  * is guaranteed that all elements between 0 and .size()-1 
  * can be accessed using .get().
  * The writer can call .get, .push_back, and .size.
+ * 
+ * RWArray functions are guaranteed to act as a memory
+ * barrier/fence.
  *
  * @author Ananya Kumar
  *
  */
 
 public class RWArray<T> {
-  private volatile int capacity;
+  private int capacity;
   private volatile int size;
   private volatile T[] data;
 
