@@ -205,29 +205,29 @@ public class ArraySpeedTest {
     // Tests comparing persistent arrays with regular arrays.
     System.out.println("\nseq_read_test");
     for (int i = 0; i < num_trials; i++) {
-      long st_time = st_seq_read_test(8000000, 50000000);
-      long persistent_time = persistent_seq_read_test(8000000, 50000000);
+      long st_time = st_seq_read_test(3000000, 15000000);
+      long persistent_time = persistent_seq_read_test(3000000, 15000000);
       System.out.println(st_time + "," + persistent_time);
     }
 
     System.out.println("\nrnd_read_test");
     for (int i = 0; i < num_trials; i++) {
-      long st_time = st_rnd_read_test(100000, 10000000);
-      long persistent_time = persistent_rnd_read_test(100, 10000000);
+      long st_time = st_rnd_read_test(3000000, 15000000);
+      long persistent_time = persistent_rnd_read_test(3000000, 15000000);
       System.out.println(st_time + "," + persistent_time);
     }
 
     System.out.println("\nseq_write_test");
     for (int i = 0; i < num_trials; i++) {
-      long st_time = st_seq_write_test(100000, 5000000);
-      long persistent_time = persistent_seq_write_test(100, 10000000);
+      long st_time = st_seq_write_test(3000000, 5000000);
+      long persistent_time = persistent_seq_write_test(3000000, 5000000);
       System.out.println(st_time + "," + persistent_time);
     }
 
     System.out.println("\nrnd_write_test");
     for (int i = 0; i < num_trials; i++) {
-      long st_time = st_rnd_write_test(100000, 5000000);
-      long persistent_time = persistent_rnd_write_test(100, 1000000);
+      long st_time = st_rnd_write_test(3000000, 5000000);
+      long persistent_time = persistent_rnd_write_test(3000000, 5000000);
       System.out.println(st_time + "," + persistent_time);
     }
 
@@ -235,28 +235,28 @@ public class ArraySpeedTest {
     // persistent arrays.
     System.out.println("\nrnd_read_test (old vs new)");
     for (int i = 0; i < num_trials; i++) {
-      long old_time = rnd_old_read_test(100000, 900000, 900000);
-      long new_time = rnd_new_read_test(100000, 900000, 900000);
+      long old_time = rnd_old_read_test(2100000, 20000000, 5000000);
+      long new_time = rnd_new_read_test(2100000, 20000000, 5000000);
       System.out.println(old_time + "," + new_time);
     }
 
     System.out.println("\n threaded_rnd_read_test");
     // Ignore results of 3, 4 threads if you don't want to deal
     // with mysterious effects of Intel hyperthreading
-    for (int num_threads = 1; num_threads < 17; num_threads++) {
+    for (int num_threads = 1; num_threads < 3; num_threads++) {
       System.out.println("numthreads = " + num_threads);
       for (int j = 0; j < num_trials; j++) {
-        System.out.println(threaded_rnd_read_test(100000, 10000000, num_threads));
+        System.out.println(threaded_rnd_read_test(100000, 1000000, num_threads));
       }
     }
 
     System.out.println("\n threaded_read_drill_test");
     // Ignore results of 3, 4 threads if you don't want to deal
     // with mysterious effects of Intel hyperthreading
-    for (int num_threads = 1; num_threads < 17; num_threads++) {
+    for (int num_threads = 1; num_threads < 3; num_threads++) {
       System.out.println("numthreads = " + num_threads);
       for (int j = 0; j < num_trials; j++) {
-        System.out.println(threaded_read_drill_test(100000, 10000000, num_threads));
+        System.out.println(threaded_read_drill_test(100000, 1000000, num_threads));
       }
     }
   }
