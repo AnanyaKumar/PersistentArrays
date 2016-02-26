@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  25 FEB 2016 18:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  26 FEB 2016 15:03
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -334,11 +334,7 @@ LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <9> not available
 (Font)              Font shape `OML/cmm/m/it' tried instead on input line 283.
  [3]
 No file sigplanconf-template.bbl.
-[4] (./sigplanconf-template.aux)
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+[4] (./sigplanconf-template.aux) ) 
 Here is how much of TeX's memory you used:
  4122 strings out of 494501
  56753 string characters out of 6167029
@@ -347,22 +343,22 @@ Here is how much of TeX's memory you used:
  25262 words of font info for 48 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
  38i,10n,42p,744b,1205s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2015basic/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/lo
-cal/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb>
-</usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.p
-fb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
-9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mr5.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmr6.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/
-cm/cmr9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmss9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmsy6.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmsy9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/t
-imes/utmb8a.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/times/
-utmbi8a.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/times/utmr
-8a.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/times/utmri8a.p
-fb>
-Output written on sigplanconf-template.pdf (4 pages, 275580 bytes).
+{/usr/local/texlive/2015basic/texmf-dist/font
+s/enc/dvips/base/8r.enc}</usr/local/texlive/2015basic/texmf-dist/fonts/type1/pu
+blic/amsfonts/cmextra/cmex9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2015basic/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2015basic/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2015basic/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2015basic/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2015basic/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/local/texlive/2015basic/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2015basic
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2015ba
+sic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015basic/t
+exmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2015basic/texmf
+-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015basic/texmf-dist
+/fonts/type1/urw/times/utmri8a.pfb>
+Output written on sigplanconf-template.pdf (4 pages, 277103 bytes).
 PDF statistics:
  73 PDF objects out of 1000 (max. 8388607)
  50 compressed objects within 1 object stream

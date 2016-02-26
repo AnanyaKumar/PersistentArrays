@@ -315,15 +315,17 @@ Fill this out. Use induction.
 \end{proof}
 
 \begin{theorem}
-Suppose that the execution of a program in the target language has a certain linear order of function calls $M_1$, $M_2$, ... $M_n$ and consider a little step transition sequence in the source language where the functions are called in the same order $F_1$, $F_2$, ..., $F_n$. For any $F_i$, if $F_i$ is a get, then the value returns by $M_i$ and $F_i$ are the same.
+Suppose that the execution of a program in the target language has a certain linear order of function calls $M_1$, $M_2$, ... $M_n$ and consider a little step transition sequence in the source language where the functions are called in the same order $F_1$, $F_2$, ..., $F_n$. For any $F_i$, if $F_i$ is a get, then the value returned by $M_i$ and $F_i$ are the same.
 \end{theorem}
 
 \begin{proof}
-This is the sequential proof of correctness.  
-Let the environment $E$ contain all the arrays. 
-We prove this by induction on the number of functional calls.
-The base case, when there are no function calls, is trivial.
-For the 
+Note that this is the sequential proof of correctness. Consider arbitrary $i$ and suppose that functional calls $F_j$ for $j \leq i$ have executed in the source language and function calls $M_j$ for $j \leq i$ have executed in the target language. Consider an arbitrary array $A'$ in the source language and corresponding array $A$ in the target language. We claim that the following data structure invariant holds:
+
+Consider arbitrary index $i$ and suppose that $A'[i]$ has value $val$. Suppose that $A$ has version $V$ and is pointing to an ArrayData object $AD$. Either there exists some version in $AD.logs[i]$ which is greater than $V$ in which case there exists a log entry $(v', val)$ where $v'$ is the smallest version in $AD.logs[i]$ that is $\geq V$. Or $AD.values[i]$ is val.
+
+The data structure invariant can be proved by induction, we present a sketch. The base case is trivial. In the inductive case, get does not mutate any array. When we do a set operation, the invariant holds for the new array because we modify the value in its ArrayData object. It holds for other arrays in the target language that might have been mutated because we insert log entries.
+
+Given that the data structure invariant holds, it is easy to see that any call to get returns the same value in the source and target language (maybe we need a little more detail here?).
 \end{proof}
 
 \begin{theorem}
