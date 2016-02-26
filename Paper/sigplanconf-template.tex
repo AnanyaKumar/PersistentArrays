@@ -32,6 +32,7 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{amsthm}
+\usepackage{listings}
 
 \newcommand{\cL}{{\cal L}}
 
@@ -68,6 +69,8 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{corollary}{Corollary}[theorem]
 \newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
 
 \begin{abstract}
 In this paper we introduce a $O(1)$ wait-free, parallel, functional array, that allows $O(1)$ reads and writes to the most recent version of the array. We describe the cost dynamics and sketch out a provable implementation. We show favorable benchmarks comparing our functional arrays with regular arrays in Java.
@@ -191,6 +194,150 @@ $$w' = \sum_{l \in L(\delta_1) \cup L(\delta_2)} \text{EXTRA-WORK} (l)$$
 Then, the fork-join cost semantics are:
 $$\delta; e_1 || e_2 \Downarrow \delta'; (v_1, v_2); 1 + w_1 + w_2 + w'; 1 + \max(s_1, s_2)$$
 
+\section{Concurrent Implementation}
+
+We implement the functional array functions using an imperative target language.
+
+\subsection{Concurrency Model}
+
+We assume a sequential consistency model of concurrency. That is, when analyzing the effects of a program, we assume that at each time step exactly one pending instruction is executed. Consider the execution of a program $P$. We label the time steps in the execution from 1 to $t$. 
+
+\begin{definition}
+Consider an object $A$. Suppose that the program invokes methods $M_1$, $M_2$, ..., $M_n$ on $A$. Consider arbitrary $i$, and suppose that the instructions in $M_i$ were executed at times $s_1$, $s_2$, ..., $s_m$. We say that $A$ is \emph{linearizable} if the effect of the program is as if $M_i$ executed atomically at some time $s_j$, and this holds for all $M_i$.
+\end{definition}
+
+\begin{definition}
+Suppose that first instruction in function call $f$ was executed at time $s_1$ and the last instruction at time $e_1$. Suppose that first instruction in function call $g$ was executed at time $s_2$ and the last instruction at time $e_2$. We say the function calls do not \emph{overlap} if the intervals $[s_1, e_1]$ and $[s_2, e_2]$ do not overlap.
+\end{definition} 
+
+Our programs have access to the link load store conditional (LLSC) function. LLSC takes an (address, old value, new value) tuple as argument. LLSC first checks that the value at address is the same as old value, if it is different then LLSC returns false. Otherwise LLSC atomically stores new value at address and returns true, however if the value at address was modified between the load and store, LLSC returns false.
+
+\subsection{Push Arrays}
+
+We use an auxiliary data structure, \emph{PushArrays}, to store log entries. PushArrays are initially empty and support 3 methods. Suppose we have a PushArray $A$. $A.push(e)$ inserts entry $e$, $A.size()$ returns the number of entries inserted, $A.get(i)$ returns the $i^{\text{th}}$ entry inserted. Note that $get$ is only defined between indices 0 and $A.size()-1$. All operations are amortized $O(1)$.
+
+PushArrays can be used semi-concurrently. At most one thread can execute $push$ at any time, but multiple threads can call $size$ and $get$. In a PushArray $A$, $A.size$ stores the number of entries and $A.data$ references an array that stores the actual entries. Pseudocode for $A.push(e)$ is shown below.
+
+\begin{lstlisting}[language=Java]
+if (isFull(A.data)) {
+  newData = new Array(A.data.capacity * 2);
+  copyValues(from = A.data, to = newData);
+  A.data = newData;
+}
+A.data[A.size] = e;
+A.size += 1;
+\end{lstlisting}
+
+\begin{theorem}
+Given that different calls to push (on the same PushArray) do not overlap, PushArrays are linearizable.
+\end{theorem}
+
+\begin{proof}
+The linearization point of $push$ is $A.size$ $+=$ $1$, and the linearization point of the other methods is their single instruction. In push, expanding the capacity of $A.data$ when it is full does not interfere with accessing $A.data$ because we copy values to the new array before pointing $A.data$ to the new array. The effects of adding $e$ are only observable after we increase $size$, since, by the specification of PushArrays, the result of calling $A.get(i)$ where $i \geq A.size()$ is not defined.
+\end{proof}
+
+\subsection{Functional Array Implementation}
+
+Suppose we have a FunctionalArray $A$. $A$ points to an ArrayData object which is referenced by $A.data$. The (imperative) array in $A.data$ is referenced by $A.data.values$, and the log entries corresponding to the $i^{\text{th}}$ index are stored in a PushArray $A.data.undo\_lists[i]$. We first explain the implementation of $A.set(pos, val)$.
+
+We use a link load store conditional to ensure that only 1 thread can modify an ArrayData object at any time. If $m$ threads try to modify $A.data$, then $m-1$ threads will fail the LLSC (returning false). Instead of modifying $A.data$, these threads will create a new ArrayData object, and will copy over values from $A.data$, as shown below.
+
+\begin{lstlisting}[language=Java]
+FunctionalArray newA;
+newA.version = A.version + 1;
+if (!LLSC(&A.data.version, A.version, 
+	newA.version)) {
+  // Create a new ArrayData object AD
+  // Copy A.data.values to AD.values
+  AD.values[pos] = val;
+  newA.data = AD;
+  return newA;
+}
+\end{lstlisting}
+
+One of the threads trying to modify the ArrayData object will get past the LLSC, will insert a log entry and then modify $A.data.values$. The ordering of inserting a log entry and modifying $A.data.values$ matters in the proof of get The pseudocode for this step is shown below.
+
+\begin{lstlisting}[language=Java]
+newA.data = A.data;
+old_value = newA.data.values[pos];
+undo_list = newA.data.undo_lists[pos];
+undo_list.push((A.version, old_value));
+newA.data.values[pos] = val;
+return newA;
+\end{lstlisting}
+
+Next we explain the implementation of $A.get(pos)$.
+
+\begin{lstlisting}[language=Java]
+guess_val = A.data.values[pos];
+if (A.version == A.data.version) {
+  return guess_val;
+}
+
+undo_list = this.data.undo_lists[pos];
+if (undo_list.size() == 0) {
+  return guess_val;
+}
+
+upper = undo_list.size() - 1;
+if (undo_list[upper].version < A.version) {
+  return guess_val;
+}
+\end{lstlisting}
+
+The last step is to binary search $undo\_list$, between the indices 0 and $upper$ (inclusive of 0 and upper). We find the log entry $L$ with the smallest version $X$ such that $A.version \leq X$. We return $L.value$.
+
+The implementation of tabulate is straightforward - just allocate a new array and fill the array with the required values.
+
+\subsection{Proof of Correctness}
+
+\begin{theorem}
+Functional Arrays are linearizable.
+\end{theorem}
+
+\begin{proof}
+We can choose any instruction in the execution of get as the linearization point - we arbitrarily choose the first instruction. The linearization point of set is the LLSC. Any instruction in tabulate can be its linearization point - we omit discussion of tabulate because the details are uninteresting.
+
+First, we prove the linearization point of get. (fill this out)
+
+Next, we prove the linearization point of set. (fill this out)
+
+\end{proof}
+
+In a previous section, we gave the evaluational (big step) dynamics of functional arrays. Alternatively, we could give the non-deterministic structural (little step) dynamics which describes the steps in the execution of a program in the source language. At each fork-join, if both sides of the fork can take a step, we could take a step on either side.
+
+\begin{theorem}
+Suppose that the execution of a program in the target language has a certain linear order of function calls $M_1$, $M_2$, ... $M_n$. Then there exists a (little step) transition sequence in the source language where the functions are called in the same order.
+\end{theorem}
+
+\begin{proof}
+Fill this out. Use induction.
+\end{proof}
+
+\begin{theorem}
+Suppose that the execution of a program in the target language has a certain linear order of function calls $M_1$, $M_2$, ... $M_n$ and consider a little step transition sequence in the source language where the functions are called in the same order $F_1$, $F_2$, ..., $F_n$. For any $F_i$, if $F_i$ is a get, then the value returns by $M_i$ and $F_i$ are the same.
+\end{theorem}
+
+\begin{proof}
+This is the sequential proof of correctness.  
+Let the environment $E$ contain all the arrays. 
+We prove this by induction on the number of functional calls.
+The base case, when there are no function calls, is trivial.
+For the 
+\end{proof}
+
+\begin{theorem}
+The non-deterministic structural dynamics and the evaluational dynamics produce the same result in the source language.
+\end{theorem}
+
+\begin{proof}
+This is a standard programming languages proof so we omit the proof.
+\end{proof}
+
+We have shown that there exists a transition sequence that our implementation correctly simulates, and that all transition sequences are equivalent to the evaluational dynamics, so our implementation correctly simulates the evaluational dynamics.
+
+\section{Correctness}
+
 \section{Machine Model}
 
 Our target language is a Java-like language augmented with tabulate, fork-join, lambda functions, and link load store conditional (LLSC). Fork-join spawns two threads, one thread executing each sub-expression. Link load store conditional (LLSC) takes an (address, old value, new value) tuple as argument. LLSC first checks that the value at address is the same as old value, if it is different then LLSC returns false. Otherwise LLSC atomically stores new value at address and returns true, however if the value at address was modified between the load and store, LLSC returns false.
@@ -198,33 +345,6 @@ Our target language is a Java-like language augmented with tabulate, fork-join, 
 Our target language is run on a P processor machine. In a single time step the machine takes at most P runnable instructions and executes them.  The effect of executing the ($\leq P$) instructions in a time step is the same as some (arbitrary) sequential ordering of the instructions. We assume that the machine does not reorder instructions in the target language. In reality, languages like Java have very relaxed consistency models, and we deal with this in our real implementation using memory fences.
 
 The link load store conditional architecture deserves special mention. Call an LLSC operation pending if the load operation has completed but the store operation has not. Multiple threads can load the value at a particular address and compare it with old value in a single time step. Only a single store operation to a particular address can be executed at a time step. However, after the store operation, in each time step the bus arbiter notifies all pending LLSC operations to the same memory address that they have failed. This assumption is reasonable because all LLSC instructions are typically processed by the bus arbiter, so the bus arbiter can keep track of pending LLSC instructions to each memory address.
-
-\section{Proof of Correctness}
-
-We begin by proving that functional arrays work correctly when executed sequentially. Specifically, in any fork join, we assume that the left fork is evaluated before the right fork.
-
-\begin{lemma}
-The implementation in section 4 correctly implements the dynamics of functional arrays when executed sequentially.
-\end{lemma}
-
-\begin{proof} 
-We define a data structure invariant, prove the invariant by structural induction on the array functions, and finally use the invariant to show that get always returns required value.
-
-Data structure invariant: consider arbitrary array $A$ in the environment. Let $A[i]$ denote the actual value of $A$ at index $i$. $A$ points to a structure $AD$ and has version $v$. If $v$ is the same as the version of $AD$, then $AD.array[i]$ and $A[i]$ are the same. Otherwise, consider arbitrary index $i$ and let $L$ be the log array of $AD$ at index $i$. If the version of all log entries in $L$ is less than $v$, then $A[i]$ is the same as $AD.array[i]$. Otherwise, let $(v,e)$ be the log entry with the lowest version $v$ s.t. $v \geq V$. Then $A[i] = e$.
-
-We prove that this invariant holds by structural induction. (Add proof outline)
-
-This then trivially gives us that get returns the correct value.
-
-\end{proof}
-
-\begin{lemma}
-Functional arrays work correctly when evaluated sequentially.
-\end{lemma}
-
-\begin{proof}
-
-\end{proof}
 
 
 % We recommend abbrvnat bibliography style.

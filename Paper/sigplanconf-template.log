@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  22 FEB 2016 17:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  25 FEB 2016 18:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -152,39 +152,64 @@ Package: amsthm 2015/03/04 v2.20.2
 \thm@headsep=\skip56
 \dth@everypar=\toks27
 )
+(/usr/local/texlive/2015basic/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count105
+\lst@gtempboxa=\box29
+\lst@token=\toks28
+\lst@length=\count106
+\lst@currlwidth=\dimen115
+\lst@column=\count107
+\lst@pos=\count108
+\lst@lostspace=\dimen116
+\lst@width=\dimen117
+\lst@newlines=\count109
+\lst@lineno=\count110
+\lst@maxwidth=\dimen118
+
+(/usr/local/texlive/2015basic/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2014/09/06 1.5e (Carsten Heinz)
+\c@lstnumber=\count111
+\lst@skipnumbers=\count112
+\lst@framebox=\box30
+)
+(/usr/local/texlive/2015basic/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2014/09/06 1.5e listings configuration
+))
+Package: listings 2014/09/06 1.5e (Carsten Heinz)
+
 (./sigplanconf-template.aux)
 \openout1 = `sigplanconf-template.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 38.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 39.
+LaTeX Font Info:    ... okay on input line 39.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 39.
 
 (/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 (/usr/local/texlive/2015basic/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count105
-\scratchdimen=\dimen115
-\scratchbox=\box29
-\nofMPsegments=\count106
-\nofMParguments=\count107
-\everyMPshowfont=\toks28
-\MPscratchCnt=\count108
-\MPscratchDim=\dimen116
-\MPnumerator=\count109
-\makeMPintoPDFobject=\count110
-\everyMPtoPDFconversion=\toks29
+\scratchcounter=\count113
+\scratchdimen=\dimen119
+\scratchbox=\box31
+\nofMPsegments=\count114
+\nofMParguments=\count115
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count116
+\MPscratchDim=\dimen120
+\MPnumerator=\count117
+\makeMPintoPDFobject=\count118
+\everyMPtoPDFconversion=\toks30
 ) (/usr/local/texlive/2015basic/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
 Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
 )
@@ -232,26 +257,28 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
+\c@lstlisting=\count119
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <18> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 66.
-\c@theorem=\count111
-\c@corollary=\count112
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 67.
+\c@theorem=\count120
+\c@corollary=\count121
+\c@definition=\count122
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <11> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 72.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 75.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 77.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 80.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 77.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 80.
  <new_array_A.png, id=1, 753.81625pt x 160.6pt>
 File: new_array_A.png Graphic file (type png)
  <use new_array_A.png>
-Package pdftex.def Info: new_array_A.png used on input line 119.
+Package pdftex.def Info: new_array_A.png used on input line 122.
 (pdftex.def)             Requested size: 226.14662pt x 48.18036pt.
 
 <set_A_return_B.png, id=2, 749.80125pt x 283.0575pt>
 File: set_A_return_B.png Graphic file (type png)
  <use set_A_return_B.png>
-Package pdftex.def Info: set_A_return_B.png used on input line 130.
+Package pdftex.def Info: set_A_return_B.png used on input line 133.
 (pdftex.def)             Requested size: 224.94211pt x 84.9179pt.
 
 [1{/usr/local/texlive/2015basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
@@ -263,60 +290,82 @@ Non-PDF special ignored!
 <set_old_array.png, id=19, 756.8275pt x 409.53pt>
 File: set_old_array.png Graphic file (type png)
  <use set_old_array.png>
-Package pdftex.def Info: set_old_array.png used on input line 141.
+Package pdftex.def Info: set_old_array.png used on input line 144.
 (pdftex.def)             Requested size: 227.05pt x 122.85994pt.
 
-Overfull \hbox (32.20663pt too wide) detected at line 163
+Overfull \hbox (32.20663pt too wide) detected at line 166
 []
  []
 
 
-Overfull \hbox (20.87608pt too wide) detected at line 164
+Overfull \hbox (20.87608pt too wide) detected at line 167
 [][]
  []
 
 
-Overfull \hbox (18.56395pt too wide) detected at line 165
+Overfull \hbox (18.56395pt too wide) detected at line 168
 [][]
  []
 
 
-Overfull \hbox (40.63304pt too wide) in paragraph at lines 188--188
+Overfull \hbox (40.63304pt too wide) in paragraph at lines 191--191
 [] 
  []
 
 [2 <./set_A_return_B.png> <./set_old_array.png>]
-No file sigplanconf-template.bbl.
-[3
+(/usr/local/texlive/2015basic/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2014/09/06 1.5e listings language file
+)
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 222.
 
-] (./sigplanconf-template.aux) ) 
+
+(/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/omsptm.fd
+File: omsptm.fd 
+)
+LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 222.
+LaTeX Font Info:    Try loading font information for OML+ptm on input line 283.
+
+
+(/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/omlptm.fd
+File: omlptm.fd 
+)
+LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <9> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 283.
+ [3]
+No file sigplanconf-template.bbl.
+[4] (./sigplanconf-template.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 2770 strings out of 494501
- 36915 string characters out of 6167029
- 113668 words of memory out of 5000000
- 6013 multiletter control sequences out of 15000+600000
+ 4122 strings out of 494501
+ 56753 string characters out of 6167029
+ 173189 words of memory out of 5000000
+ 7343 multiletter control sequences out of 15000+600000
  25262 words of font info for 48 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 37i,10n,34p,744b,224s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2015basic/texmf-dist/fonts/
-enc/dvips/base/8r.enc}</usr/local/texlive/2015basic/texmf-dist/fonts/type1/publ
-ic/amsfonts/cmextra/cmex9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2015basic/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2015basic/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2015basic/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2015basic/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2015basic/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/local/texlive/2015basic/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2015basic/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2015basi
-c/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015basic/tex
-mf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2015basic/texmf-d
-ist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015basic/texmf-dist/f
-onts/type1/urw/times/utmri8a.pfb>
-Output written on sigplanconf-template.pdf (3 pages, 261880 bytes).
+ 38i,10n,42p,744b,1205s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2015basic/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/lo
+cal/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb>
+</usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.p
+fb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mr5.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmr6.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmr9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmss9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmsy6.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmsy9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/t
+imes/utmb8a.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/times/
+utmbi8a.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/times/utmr
+8a.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/type1/urw/times/utmri8a.p
+fb>
+Output written on sigplanconf-template.pdf (4 pages, 275580 bytes).
 PDF statistics:
- 70 PDF objects out of 1000 (max. 8388607)
- 48 compressed objects within 1 object stream
+ 73 PDF objects out of 1000 (max. 8388607)
+ 50 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
