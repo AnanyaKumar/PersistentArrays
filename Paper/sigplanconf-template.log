@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  26 FEB 2016 15:03
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  9 MAR 2016 05:47
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -269,99 +269,114 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 80.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
 (Font)              Font shape `OT1/ptm/b/it' tried instead on input line 80.
- <new_array_A.png, id=1, 753.81625pt x 160.6pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--115
+
+ []
+
+<new_array_A.png, id=1, 753.81625pt x 160.6pt>
 File: new_array_A.png Graphic file (type png)
  <use new_array_A.png>
-Package pdftex.def Info: new_array_A.png used on input line 122.
+Package pdftex.def Info: new_array_A.png used on input line 134.
 (pdftex.def)             Requested size: 226.14662pt x 48.18036pt.
-
-<set_A_return_B.png, id=2, 749.80125pt x 283.0575pt>
-File: set_A_return_B.png Graphic file (type png)
- <use set_A_return_B.png>
-Package pdftex.def Info: set_A_return_B.png used on input line 133.
-(pdftex.def)             Requested size: 224.94211pt x 84.9179pt.
-
-[1{/usr/local/texlive/2015basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+ [1{/usr/local/texlive/2015basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
 Non-PDF special ignored!
 
- <./new_array_A.png>]
-<set_old_array.png, id=19, 756.8275pt x 409.53pt>
+]
+<set_A_return_B.png, id=17, 749.80125pt x 283.0575pt>
+File: set_A_return_B.png Graphic file (type png)
+ <use set_A_return_B.png>
+Package pdftex.def Info: set_A_return_B.png used on input line 145.
+(pdftex.def)             Requested size: 224.94211pt x 84.9179pt.
+
+<set_old_array.png, id=18, 756.8275pt x 409.53pt>
 File: set_old_array.png Graphic file (type png)
  <use set_old_array.png>
-Package pdftex.def Info: set_old_array.png used on input line 144.
+Package pdftex.def Info: set_old_array.png used on input line 156.
 (pdftex.def)             Requested size: 227.05pt x 122.85994pt.
 
-Overfull \hbox (32.20663pt too wide) detected at line 166
+Overfull \hbox (32.20663pt too wide) detected at line 178
 []
  []
 
 
-Overfull \hbox (20.87608pt too wide) detected at line 167
+Overfull \hbox (20.87608pt too wide) detected at line 179
 [][]
  []
 
 
-Overfull \hbox (18.56395pt too wide) detected at line 168
+Overfull \hbox (18.56395pt too wide) detected at line 180
 [][]
  []
 
 
-Overfull \hbox (40.63304pt too wide) in paragraph at lines 191--191
+Overfull \hbox (40.63304pt too wide) in paragraph at lines 203--203
 [] 
  []
 
-[2 <./set_A_return_B.png> <./set_old_array.png>]
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2 <./new_array_A.png> <./set_A_return_B.png> <./set_old_array.png>]
 (/usr/local/texlive/2015basic/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2014/09/06 1.5e listings language file
 )
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 222.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 234.
 
 
 (/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 222.
-LaTeX Font Info:    Try loading font information for OML+ptm on input line 283.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 234.
 
+Overfull \hbox (3.00247pt too wide) in paragraph at lines 264--265
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
 
-(/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/omlptm.fd
+[3]
+LaTeX Font Info:    Try loading font information for OML+ptm on input line 296.
+
+ (/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
 LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <9> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 283.
- [3]
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 296.
+
+[4]
 No file sigplanconf-template.bbl.
-[4] (./sigplanconf-template.aux) ) 
+[5
+
+] (./sigplanconf-template.aux) ) 
 Here is how much of TeX's memory you used:
- 4122 strings out of 494501
- 56753 string characters out of 6167029
- 173189 words of memory out of 5000000
- 7343 multiletter control sequences out of 15000+600000
+ 4123 strings out of 494501
+ 56760 string characters out of 6167029
+ 171875 words of memory out of 5000000
+ 7344 multiletter control sequences out of 15000+600000
  25262 words of font info for 48 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 38i,10n,42p,744b,1205s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2015basic/texmf-dist/font
-s/enc/dvips/base/8r.enc}</usr/local/texlive/2015basic/texmf-dist/fonts/type1/pu
-blic/amsfonts/cmextra/cmex9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2015basic/texmf-dist/fon
-ts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2015basic/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2015basic/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2015basic/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2015basic/texmf
--dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/local/texlive/2015basic/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2015basic
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2015ba
-sic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015basic/t
-exmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2015basic/texmf
--dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015basic/texmf-dist
-/fonts/type1/urw/times/utmri8a.pfb>
-Output written on sigplanconf-template.pdf (4 pages, 277103 bytes).
+ 38i,10n,42p,744b,1500s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2015basic/texmf-dist/fonts/
+enc/dvips/base/8r.enc}</usr/local/texlive/2015basic/texmf-dist/fonts/type1/publ
+ic/amsfonts/cmextra/cmex9.pfb></usr/local/texlive/2015basic/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2015basic/texmf-dist/fonts
+/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2015basic/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2015basic/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2015basic/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2015basic/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/local/texlive/2015basic/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2015basic/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/local/texlive/2015basi
+c/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015basic/tex
+mf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2015basic/texmf-d
+ist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015basic/texmf-dist/f
+onts/type1/urw/times/utmri8a.pfb>
+Output written on sigplanconf-template.pdf (5 pages, 284585 bytes).
 PDF statistics:
- 73 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
+ 76 PDF objects out of 1000 (max. 8388607)
+ 52 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

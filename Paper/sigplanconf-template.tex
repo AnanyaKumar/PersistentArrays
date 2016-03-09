@@ -87,7 +87,7 @@ Arrays are very important in functional programming languages because they allow
 
 \section{Previous Approaches}
 
-Many functional programming languages use monads to build arrays. However, monads do not allow accessing old versions of an array.
+There is a lot of prior work on functional arrays, but previous approaches have significant limitations. Many functional programming languages use monads to build arrays. However, monads do not allow accessing old versions of an array.
 
 Another approach is to use compiler based reference counting. If the number of references to an array is provably one, the compiler allows the array to mutate, otherwise the compiler copies the array before writing to the array. This approach makes it difficult for programmers to reason about the time complexity of array operations because it depends on the compiler. Furthermore, if multiple variables reference the same array, the array is copied even if all writes are to the most recent version. This could make the time complexity of programs significantly higher than they need to be.
 
@@ -111,7 +111,19 @@ $$\frac{f \Downarrow \lambda x . e \;\;\; y \Downarrow v}{f \; y \Downarrow [v/x
 The language also includes 3 functions for working with arrays: tabulate, get, and set. The dynamics for tabulate is given below:
 $$\frac{f(1) \Downarrow v_1, ..., f(n) \Downarrow v_n}{\text{tabulate} \; f \; n \Downarrow [1 \mapsto v_1, ..., n \mapsto v_n]}$$
 
-The dynamics for the other two array functions are standard.
+$get(A,i)$ returns the value at the $i$th index of $A$. $set(A,i,v)$ returns a new array where the value at index $i$ is $v$ and the value at all other indices is the same as in $A$. The evaluation of a simple program in our language is shown below:\\
+
+$(\lambda A. \; get(A, 2) + get(A,3)) set(tabulate(\lambda i . \; i, 5), 2, 10)$
+
+$(\lambda A. \; get(A, 2) + get(A,3)) set([1,2,3,4,5], 2, 10)$
+
+$(\lambda A. \; get(A, 2) + get(A,3)) [1,10,3,4,5]$
+
+$get([1,10,3,4,5], 2) + get([1,10,3,4,5],3) $
+
+$10+3$
+
+$13$
 
 \section{Approach}
 
@@ -246,16 +258,17 @@ We use a link load store conditional to ensure that only 1 thread can modify an 
 FunctionalArray newA;
 newA.version = A.version + 1;
 if (!LLSC(&A.data.version, A.version, 
-	newA.version)) {
+	newA.version) OR
+    A.version % A.size == 0) {
   // Create a new ArrayData object AD
-  // Copy A.data.values to AD.values
+  // Forall i = 1:n, AD.values[i] = get(A, i)
   AD.values[pos] = val;
   newA.data = AD;
   return newA;
 }
 \end{lstlisting}
 
-One of the threads trying to modify the ArrayData object will get past the LLSC, will insert a log entry and then modify $A.data.values$. The ordering of inserting a log entry and modifying $A.data.values$ matters in the proof of get The pseudocode for this step is shown below.
+At most one of the threads trying to modify the ArrayData object will get past the LLSC, will insert a log entry and then modify $A.data.values$. The ordering of inserting a log entry and modifying $A.data.values$ matters in the proof of get. The pseudocode for this step is shown below.
 
 \begin{lstlisting}[language=Java]
 newA.data = A.data;
@@ -296,7 +309,8 @@ Functional Arrays are linearizable.
 \end{theorem}
 
 \begin{proof}
-We can choose any instruction in the execution of get as the linearization point - we arbitrarily choose the first instruction. The linearization point of set is the LLSC. Any instruction in tabulate can be its linearization point - we omit discussion of tabulate because the details are uninteresting.
+
+The linearization point of get is when we compare if A.version and AD.version are the same. The linearization point of set is the LLSC. Any instruction in tabulate can be its linearization point - we omit discussion of tabulate because the details are uninteresting.
 
 First, we prove the linearization point of get. (fill this out)
 
@@ -304,41 +318,48 @@ Next, we prove the linearization point of set. (fill this out)
 
 \end{proof}
 
+Linearizability allows us to assume that array operations happen atomically. Note that all non array operations in our source language are executed in a single time step, so any well formed program is linearizable. In fact, since linearizability composes, we can show that more complicated languages that use our arrays are also linearizable.
+
 In a previous section, we gave the evaluational (big step) dynamics of functional arrays. Alternatively, we could give the non-deterministic structural (little step) dynamics which describes the steps in the execution of a program in the source language. At each fork-join, if both sides of the fork can take a step, we could take a step on either side.
-
-\begin{theorem}
-Suppose that the execution of a program in the target language has a certain linear order of function calls $M_1$, $M_2$, ... $M_n$. Then there exists a (little step) transition sequence in the source language where the functions are called in the same order.
-\end{theorem}
-
-\begin{proof}
-Fill this out. Use induction.
-\end{proof}
-
-\begin{theorem}
-Suppose that the execution of a program in the target language has a certain linear order of function calls $M_1$, $M_2$, ... $M_n$ and consider a little step transition sequence in the source language where the functions are called in the same order $F_1$, $F_2$, ..., $F_n$. For any $F_i$, if $F_i$ is a get, then the value returned by $M_i$ and $F_i$ are the same.
-\end{theorem}
-
-\begin{proof}
-Note that this is the sequential proof of correctness. Consider arbitrary $i$ and suppose that functional calls $F_j$ for $j \leq i$ have executed in the source language and function calls $M_j$ for $j \leq i$ have executed in the target language. Consider an arbitrary array $A'$ in the source language and corresponding array $A$ in the target language. We claim that the following data structure invariant holds:
-
-Consider arbitrary index $i$ and suppose that $A'[i]$ has value $val$. Suppose that $A$ has version $V$ and is pointing to an ArrayData object $AD$. Either there exists some version in $AD.logs[i]$ which is greater than $V$ in which case there exists a log entry $(v', val)$ where $v'$ is the smallest version in $AD.logs[i]$ that is $\geq V$. Or $AD.values[i]$ is val.
-
-The data structure invariant can be proved by induction, we present a sketch. The base case is trivial. In the inductive case, get does not mutate any array. When we do a set operation, the invariant holds for the new array because we modify the value in its ArrayData object. It holds for other arrays in the target language that might have been mutated because we insert log entries.
-
-Given that the data structure invariant holds, it is easy to see that any call to get returns the same value in the source and target language (maybe we need a little more detail here?).
-\end{proof}
 
 \begin{theorem}
 The non-deterministic structural dynamics and the evaluational dynamics produce the same result in the source language.
 \end{theorem}
 
 \begin{proof}
-This is a standard programming languages proof so we omit the proof.
+This is a standard implicit parallelism type theorem (ref: PFPL) so we omit the details.
 \end{proof}
 
-We have shown that there exists a transition sequence that our implementation correctly simulates, and that all transition sequences are equivalent to the evaluational dynamics, so our implementation correctly simulates the evaluational dynamics.
+Now, to show that our implementation correctly implements the source language, it suffices to show that any valid execution of our implementation produces the same result as a little step transition sequence in the source language (since all transition sequences produce the same value as the evaluational dynamics).
+ 
+\begin{theorem}
+For any program $P$ in the source language, executing our implementation $I$ of $P$ produces the same result as some transition sequence of $P$. Note that $I$ is a program in the target language.
+\end{theorem}
 
-\section{Correctness}
+\begin{proof}
+We prove the claim by induction. We focus on the part of the proof dealing with arrays and give a sketch of the rest.
+
+Our inductive hypothesis is that after $t$ time steps in an arbitrary execution of $I$, there exists a transition sequence $S$ s.t.:
+\begin{enumerate}
+\item $I$ becomes $I'$ after this particular execution, $S$ takes $P$ to $P'$
+\item $I'$ and $P'$ are equivalent in the following sense. Any non array value is identical in $I'$ and $P'$. For any abstract array $A$ in $P'$ there exists a corresponding representation $A_I$ s.t. the following holds. Consider arbitrary index $i$ and suppose that $A[i]$ has value $val$. Suppose that $A_I$ has version $V$ and is pointing to an ArrayData object $AD$. If there exists some version in $AD.logs[i]$ which is greater than $V$ then there exists a log entry $(v', val)$ where $v'$ is the smallest version in $AD.logs[i]$ that is $\geq V$. If no version in $AD.logs[i]$ is greater than $V$, then $AD.values[i]$ is val.
+\end{enumerate}
+
+The base case holds since $P$ and $I$ are initially identical. For the inductive step, when $I'$ takes a step, we take the corresponding step in $P$ to get a new transition sequence $S'$. We know that such a step exists because $I'$ and $P'$ are equivalent. If the step is not an array function then the IH holds since the step will be executed in the same way in the source and target languages.
+
+Suppose that the next step is tabulate. By the IH, tabulate is called with the same arguments $n$ and $f$ in the source language and the implementation. In the source language, tabulate returns an array $A$ with $A[i] = f(i)$ for all $1 \leq i \leq n$. In the implementation, tabulate returns an array that points to a new ArrayData object $AD$ with empty logs and $AD.values[i] = f(i)$ for all $1 \leq i \leq n$. So the inductive step holds.
+
+Suppose that the next step is get. By the IH, get is called on equivalent arrays and the same index $i$ in the source language and implementation. It is easy to trace through the implementation of get and see that get returns the same value in the source language and implementation.
+
+Suppose that the next step is set. Suppose that in the target language we execute $set(A_I, i, v)$. Then by IH, in the source language the corresponding step is $set(A, i, v)$ where $A$ and $A_I$ are equivalent. Denote $set(A, i, v)$ by $B$ and $set(A_I, i, v)$ by $B_I$. We need to show that $B$ and $B_I$ are equivalent, and all arrays that were previously equivalent are still equivalent.
+
+Case 1: we create a new ArrayData object $AD$ in set. In this case, for all $j \neq i$ we set $AD.values[j]$ to $get(A_I, j)$ which by the IH is the same as $A[j]$. Since we only modified index $i$, $j \neq i \Rightarrow A[j] = B[j]$. Also, we set $AD.values[i]$ to $v$, so $AD.values[i] = B[i]$. Since all logs are empty, this means that $B$ and $B_I$ are equivalent. Since we create a new ArrayData object, we do not modify any other arrays, so arrays that were previously equivalent are still equivalent.
+
+Case 2: we modify the ArrayData object $AD$ that $A_I$ points to. This means that $A.version = AD.version$. We can show that all log entries in $AD$ have version $< AD.version$, and are in increasing order. Then the IH implies that before modifying $AD$, $AD.values[j] = A[j]$ for all indices $j$. So after setting $AD.values[i]$ to $v$, $AD.values[j] = B[j]$ for all $j$, which means $B_I$ and $B$ are equivalent.
+
+Consider arbitrary abstract array $C$ in the source language and corresponding representation $C_I$ in the implementation with $C_I \neq B_I$. If $C_I$ did not point to $AD$ then $C_I$ remains equivalent to $C$. Regardless, we note that for all indices $j \neq i$, $C_I$ remains the same and is equivalent to $C$. At index $i$, if the value at $C[i]$ was previously stored in a log entry, then $C_I$ and $C$ remain equivalent since log entries are added in increasing version numbers. If the value at $C[i]$ was stored in $AD[i]$ then we add a log entry at index $i$ so $C_I$ and $C$ remain equivalent.
+
+\end{proof}
 
 \section{Machine Model}
 
