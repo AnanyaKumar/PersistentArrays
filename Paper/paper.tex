@@ -83,28 +83,48 @@ array, parallel, cost semantics
 
 \section{Introduction}
 
-Arrays are very important in functional programming languages because they allow work-efficient implementations of algorithms like depth-first search. Accessing old versions of arrays can be useful for efficient checkpointing, logging, and event handling. In this paper we introduce an efficient, parallel, functional array that allows $O(1)$ reads and writes to the most recent version of the array.
+Arrays are very important in functional programming languages because they allow work-efficient implementations of algorithms like depth-first search. Accessing old versions of arrays can be useful for efficient checkpointing, logging, and event handling.
 
-\section{Previous Approaches}
+\subsection{Previous Approaches}
 
-There is a lot of prior work on functional arrays, but previous approaches have significant limitations. Many functional programming languages use monads to build arrays. However, monads do not allow accessing old versions of an array.
+There has been a lot of great work on functional arrays, but previous approaches have some limitations. Many functional programming languages use monads to build arrays. However, monads do not allow accessing old versions of an array.
 
-Another approach is to use compiler based reference counting. If the number of references to an array is provably one, the compiler allows the array to mutate, otherwise the compiler copies the array before writing to the array. This approach makes it difficult for programmers to reason about the time complexity of array operations because it depends on the compiler. Furthermore, if multiple variables reference the same array, the array is copied even if all writes are to the most recent version. This could make the time complexity of programs significantly higher than they need to be.
+Another creative approach is to use compiler based reference counting. If the number of references to an array is provably one, the compiler allows the array to mutate, otherwise the compiler copies the array before writing to the array. However, this approach makes it difficult for programmers to reason about the time complexity of array operations because it depends on the compiler. Furthermore, if multiple variables reference the same array, the array is copied even if all writes are to the most recent version. This could make the time complexity of programs significantly higher than they need to be.
 
 A third approach is to use linear types to ensure that programmers can only access and mutate arrays in valid ways. This approach is very difficult to implement in existing programming languages.
 
-O' Neill's functional arrays guarantee $O(1)$ access and insertions when used like an imperative array. However, the arrays use version trees which are inefficient in practice. Additionally, the reads and writes to the most recent version of the array might take $O(\log{n})$ work if the array is not used like an imperative array.
+O' Neill's functional arrays guarantee $O(1)$ access and insertions when used like an imperative array. However, the arrays explicitly implement version trees which are inefficient in practice. Additionally, the reads and writes to the most recent version of the array might take $O(\log{n})$ work if the array is not used like an imperative array.
 
 Chuang's approach supports $O(1)$ accesses and insertions to the most recent version of arrays, however accessing old versions of the array takes $O(n)$ work which is often impractical.
 
 None of the existing approaches support concurrent operations on arrays. O' Neill suggests having a lock for each element of the array. However, when many threads contend for the same element, this would serialize accesses and make accesses not $O(1)$. Additionally, per-element locks add significant memory overhead. Separation logic could be used to parallelize divide and conquer algorithms on arrays however they would severely restrict the way functional arrays can be used.
 
+\subsection{Our Approach}
+
+Our arrays support 3 methods: tabulate, get, and set. The dynamics are functional, in particular set returns a new array and leaves the original array intact.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.5]{leaf_interior_intro}
+\nocaptionrule \caption{Example usage of functional arrays}
+\label{fig:leaf_interior_intro}
+\end{figure}
+
+In figure \ref{fig:leaf_interior_intro}, A and C are \emph{interior} arrays and B and D are \emph{leaf} arrays. Calling get and set on leaf arrays costs $O(1)$ but calling get and set on interior arrays is more expensive. In the cost dynamics, we thread a store that keeps track of whether an array is an interior or leaf array.
+
+We also give and prove fork join cost dynamics for our arrays. The dynamics for arrays used concurrently are non trivial because one thread might call get on a leaf array while another thread calls set. To deal with this, we compute the work of each fork separately, and then charge additional work at the join point if an array is used in both forks.
+
+In our implementation of a functional array, we keep an array of values (multiple functional arrays might point to the same array). For each index of the array, we also keep a history of values that were previously at that index. To access an element in an interior array, we need to search through the history of values.
+
+We give a wait-free concurrent implementation that uses careful synchronization. We prove linearizability of the implementation and use that to prove that arrays work correctly when used concurrently. Finally, we give a provable implementation for our cost dynamics.
+
 \section{Dynamics}
 
 We use a standard applicative-order language defined as follows:
-$$L = x \; | \; c  \; | \; \lambda x.e \; | \; f \; x \; | \; e_1 || e_2 \; | \; \text{if } e_1 \text{ then } e_2 \text{ else } e_3$$
+$$e = x \; | \; c  \; | \; \lambda x.e \; | \; e_1 e_2 \; | \; e_1 || e_2 \; | \; \text{if } e_1 \text{ then } e_2 \text{ else } e_3$$
 
-$L$ contains the usual arithmetic types, such as the natural numbers, and numerical operations such as sums and products. Dynamics for function application and fork-join are given as examples.
+$L$ contains the usual arithmetic types, such as the natural numbers, and numerical operations such as sums and products. Our dynamics are given by the judgement $e \Downarrow v$ which means that expression $e$ evaluates to $v$. Dynamics for function application and fork-join are given as examples.
+
 $$\frac{e_1 \Downarrow v_1 \;\;\; e_2 \Downarrow v_2}{e_1 || e_2 \Downarrow (v_1, v_2)} \text{ (fork-join)}$$
 $$\frac{f \Downarrow \lambda x . e \;\;\; y \Downarrow v}{f \; y \Downarrow [v/x]e} \text{ (function-app)}$$
 
@@ -124,6 +144,65 @@ $get([1,10,3,4,5], 2) + get([1,10,3,4,5],3) $
 $10+3$
 
 $13$
+
+\section{Cost Dynamics}
+
+The dynamics given in the previous section are functional. However, the costs of get and set depend on whether the array is a leaf array or an internal array. To deal with this, we thread a store through the cost dynamics to keep track of whether each array is a leaf or internal array.
+
+The cost dynamics of fork-join pose an additional challenge. An array can be used concurrently by multiple threads and the costs could depend on the order in which the instructions are interleaved. Figure \ref{fig:fork_join_intuition} shows 3 ways a leaf array $A$ might be used. In particular, one side of the fork might call get on $A$ while the other side calls set (see the center panel). The calls to get on the left branch would be $O(1)$ if and only if they execute before the call to set on the right branch.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.3]{fork_join_intuition}
+\nocaptionrule \caption{Different ways an array might be used in a fork join}
+\label{fig:fork_join_intuition}
+\end{figure}
+
+We cannot make any assumptions about how the instructions in different branches of a fork are interleaved, so we give the worst case time complexity over all possible interleavings. We first compute the work of each fork separately. Then for arrays that are used in both forks, we add additional work at the join point. To compute the additional work at the join point, we keep track of the number of gets that cost $O(1)$ on each side of the fork. If the array was modified on the other side of the fork, then the modification might have happened before the get, so we need to charge additional work for the get.
+
+Our cost dynamics are defined by the following judgement, where $\delta$ is the store, $e$ is the expression, $\delta'$ is the new store, $v$ is the value returned by evaluating $e$, $w$ is the work, and $s$ is the span.
+$$\delta; f \; args \boldsymbol\Downarrow \delta'; v; w; s$$
+
+We give the cost dynamics for expressions in the language: (insert cost dynamics for standard functions later)
+
+Arrays are represented by $(l, V)$ where $l$ is a label that uniquely identifies the array, and $V$ contains the values in the array. $V[i]$ is the $i^{\text{th}}$ value in the array. If the set method has been applied on an array, the array is a leaf array (represented by $-$), otherwise the array is an interior array (represented by $+$). 
+
+Array methods have different costs depending on whether the array is a leaf or interior array. Let $C(l)$ be the number of get operations applied on array $A = (l, V)$ that had $O(1)$ work. We thread a store $\delta$ through each operation. $\delta$ maps array labels $l$ to $(+/-, c)$, where $c = C(l)$. Let $f(n)$ be the work of calling get on an interior array and $g(n)$ be the work of calling set on an interior array.
+
+The cost dynamics for the methods on a functional array of size $n$ are:
+$$\frac{l = \text{new label} \;\;\; f(1) \Downarrow v_1; w_1; s_1; ... f(n) \Downarrow v_{n}; w_{n}; s_{n}}{\delta; \text{tabulate } f \; n \Downarrow \delta[l \mapsto (+, 0)]; (l, \bigcup_{i=1}^n [i \mapsto v_i]); 1+\sum w_i; 1+\max s_i}$$
+$$\frac{A = (l,V) \;\;\; \delta[l \mapsto (+, c)] \;\;\; l' = \text{new label}}{\delta; \text{set} \; A \; i \; v \Downarrow \delta[l \mapsto (-, c), l' \mapsto (+, 0)]; (l', V[i \mapsto v]); 1; 1} \text{  (set-leaf)}$$
+$$\frac{A = (l,V) \;\;\; \delta[l \mapsto (-, c)] \;\;\;  l' = \text{new label}}{\delta; \text{set} \; A \; i \; v \Downarrow \delta[l \mapsto (-, c), l' \mapsto (+, 0)]; (l', V[i \mapsto v]); g(n); 1} \text{  (set-interior)}$$
+$$\frac{A = (l,V) \;\;\; \delta[l \mapsto (+, c)]}{\delta; \text{get} \; A \; i \Downarrow \delta[l \mapsto (+, c+1)]; V[i]; 1; 1} \text{  (get-leaf)}$$
+$$\frac{A = (l,V) \;\;\; \delta[l \mapsto (-, c)]}{\delta; \text{get} \; A \; i \Downarrow \delta; V[i]; f(n); 1} \text{  (get-interior)}$$
+
+Set creates a new label and array and modifies the store to indicate that the newly created array is a leaf array, and the array set was called on has become an interior array. The work for set is higher for interior arrays. Get returns the value at the desired index, if the array is a leaf then the operation costs $O(1)$ but we increment the counter of $O(1)$ gets in the store,
+
+The fork-join cost semantics are the most interesting. We give the cost dynamic using 2 helper functions. Let $L(\delta)$ denote the set of labels in the store $\delta$.
+Simplify the fork join cost dynamics
+\begin{align*}
+\text{def NEW}&\text{-MAP: }L(\delta_1) \cup L(\delta_2) \to (+/-, \text{int}) = \\
+\text{Case } &\delta[l \mapsto (-,c)]: (-, c)  \\
+\text{Case } &\delta[l \mapsto (+,c)]:  \\
+&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (+,c+y)]: (+, c+x+y) \\
+&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (-,c+y)]: (-, c+y) \\
+&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (+,c+y)]: (-, c+x) \\
+&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (-,c+y)]: (-, c) \\
+\text{Else: } & \\
+&\text{Case } \delta_1[l \mapsto (s,c)]: (s,c) \\
+&\text{Case } \delta_2[l \mapsto (s,c)]: (s,c) \\
+\text{def EXT}&\text{RA-WORK: }L(\delta_1) \cup L(\delta_2) \to int = \\
+\text{Case } &\delta[l \mapsto (+,c)]:  \\
+&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (+,c+y)]: 0 \\
+&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (-,c+y)]: x f(n) \\
+&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (+,c+y)]: y f(n) \\
+&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (-,c+y)]: (x+y)f(n) + g(n) \\
+\text{Else: } & 0
+\end{align*}											
+$$\delta' = \bigcup_{l \in L(\delta_1) \cup L(\delta_2)} \text{NEW-MAP} (l)$$
+$$w' = \sum_{l \in L(\delta_1) \cup L(\delta_2)} \text{EXTRA-WORK} (l)$$
+Then, the fork-join cost semantics are:
+$$\delta; e_1 || e_2 \Downarrow \delta'; (v_1, v_2); 1 + w_1 + w_2 + w'; 1 + \max(s_1, s_2)$$
 
 \section{Approach}
 
@@ -165,46 +244,6 @@ The logs are stored in a doubling array which doubles in size when full. This gu
 Suppose that the size of the array is $n$. Every $n$ times an ArrayData object is modified, we create a new ArrayData object, and copy the values over to the new ArrayData object. This ensures that $m \leq n$ i.e. we don't have too many log entries in an ArrayData object. Copying is amortized $O(1)$.
 
 It follows that in the RAM model the work of set and get is $O(1)$ for a NEW array. Get in an OLD array involves a binary search and has work $O(\log{n})$. Set in an OLD array involves copying the array, and has work $O(n)$.
-
-\section{Cost Dynamics}
-
-Arrays are represented by $(l, D)$ where $l$ is a label that uniquely identifies the array, and $D$ contains the values in the array. $D[i]$ is the $i^{\text{th}}$ value in the array. If the set method has been applied on an array, the array is OLD (represented by $-$), otherwise the array is NEW (represented by $+$). 
-
-Array methods have different costs depending on whether the array is NEW or OLD. Let $C(l)$ be the number of get operations applied on array $A = (l, D)$ that had $O(1)$ work. We thread a store $\delta$ through each operation. $\delta$ maps array labels $l$ to $(+/-, c)$, where $c = C(l)$.
-
-Our cost dynamics are defined by the following judgement, where $\delta$ is the store, $f$ is the array function being applied, $\delta'$ is the new store, $v$ is the value returned by applying $f$ on $args$, $w$ is the work, and $s$ is the span.
-$$\delta; f \; args \Downarrow \delta'; v; w; s$$
-The cost dynamics for the methods on a functional array of size $n$ are:
-$$\frac{l = \text{new label} \;\;\; f(1) \Downarrow v_1; w_1; s_1; ... f(n) \Downarrow v_{n}; w_{n}; s_{n}}{\delta; \text{tabulate } f \; n \Downarrow \delta[l \mapsto (+, 0)]; (l, \bigcup_{i=1}^n [i \mapsto v_i]); 1+\sum w_i; 1+\max s_i}$$
-$$\frac{\delta[l \mapsto (+, c)] \;\;\; A = (l,D) \;\;\; l' = \text{new label}}{\delta; \text{set} \; A \; i \; v \Downarrow \delta[l \mapsto (-, c), l' \mapsto (+, 0)]; (l', D[i \mapsto v]); 1; 1} \text{  (set-new)}$$
-$$\frac{\delta[l \mapsto (-, c)] \;\;\; A = (l,D) \;\;\;  l' = \text{new label}}{\delta; \text{set} \; A \; i \; v \Downarrow \delta[l \mapsto (-, c), l' \mapsto (+, 0)]; (l', D[i \mapsto v]); n; 1} \text{  (set-old)}$$
-$$\frac{\delta[l \mapsto (+, c)] \;\;\; A = (l,D)}{\delta; \text{get} \; A \; i \Downarrow \delta[l \mapsto (+, c+1)]; D[i]; 1; 1} \text{  (get-new)}$$
-$$\frac{\delta[l \mapsto (-, c)] \;\;\; A = (l,D)}{\delta; \text{get} \; A \; i \Downarrow \delta; D[i]; \log{n}; 1} \text{  (get-old)}$$
-
-The fork-join cost semantics are the most interesting. We give the cost dynamic using 2 helper functions. Let $L(\delta)$ denote the set of labels in the store $\delta$. Let $f(n)$ be the cost of calling get on an OLD array and $g(n)$ be the cost of calling set on an OLD array.
-\begin{align*}
-\text{def NEW}&\text{-MAP: }L(\delta_1) \cup L(\delta_2) \to (+/-, \text{int}) = \\
-\text{Case } &\delta[l \mapsto (-,c)]: (-, c)  \\
-\text{Case } &\delta[l \mapsto (+,c)]:  \\
-&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (+,c+y)]: (+, c+x+y) \\
-&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (-,c+y)]: (-, c+y) \\
-&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (+,c+y)]: (-, c+x) \\
-&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (-,c+y)]: (-, c) \\
-\text{Else: } & \\
-&\text{Case } \delta_1[l \mapsto (s,c)]: (s,c) \\
-&\text{Case } \delta_2[l \mapsto (s,c)]: (s,c) \\
-\text{def EXT}&\text{RA-WORK: }L(\delta_1) \cup L(\delta_2) \to int = \\
-\text{Case } &\delta[l \mapsto (+,c)]:  \\
-&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (+,c+y)]: 0 \\
-&\text{Case } \delta_1[l \mapsto (+,c+x)], \delta_2[l \mapsto (-,c+y)]: x f(n) \\
-&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (+,c+y)]: y f(n) \\
-&\text{Case } \delta_1[l \mapsto (-,c+x)], \delta_2[l \mapsto (-,c+y)]: (x+y)f(n) + g(n) \\
-\text{Else: } & 0
-\end{align*}											
-$$\delta' = \bigcup_{l \in L(\delta_1) \cup L(\delta_2)} \text{NEW-MAP} (l)$$
-$$w' = \sum_{l \in L(\delta_1) \cup L(\delta_2)} \text{EXTRA-WORK} (l)$$
-Then, the fork-join cost semantics are:
-$$\delta; e_1 || e_2 \Downarrow \delta'; (v_1, v_2); 1 + w_1 + w_2 + w'; 1 + \max(s_1, s_2)$$
 
 \section{Concurrent Implementation}
 
