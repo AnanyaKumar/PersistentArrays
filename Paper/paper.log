@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  11 MAR 2016 14:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2015.12.18)  11 MAR 2016 14:53
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -259,21 +259,21 @@ e
 ))
 \c@lstlisting=\count119
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <18> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 67.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 69.
 \c@theorem=\count120
 \c@corollary=\count121
 \c@definition=\count122
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <11> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 75.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 77.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 80.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 82.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/it' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 80.
+(Font)              Font shape `OT1/ptm/b/it' tried instead on input line 82.
  <leaf_interior_intro.png, id=1, 282.05376pt x 297.11pt>
 File: leaf_interior_intro.png Graphic file (type png)
 
 <use leaf_interior_intro.png>
-Package pdftex.def Info: leaf_interior_intro.png used on input line 110.
+Package pdftex.def Info: leaf_interior_intro.png used on input line 112.
 (pdftex.def)             Requested size: 126.923pt x 133.69826pt.
  [1{/usr/local/texlive/2015basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
@@ -281,7 +281,7 @@ Package pdftex.def Info: leaf_interior_intro.png used on input line 110.
 Non-PDF special ignored!
 
  <./leaf_interior_intro.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 136--137
+Underfull \hbox (badness 10000) in paragraph at lines 138--139
 
  []
 
@@ -289,85 +289,85 @@ Underfull \hbox (badness 10000) in paragraph at lines 136--137
 File: fork_join_intuition.png Graphic file (type png)
 
 <use fork_join_intuition.png>
-Package pdftex.def Info: fork_join_intuition.png used on input line 158.
+Package pdftex.def Info: fork_join_intuition.png used on input line 160.
 (pdftex.def)             Requested size: 199.94853pt x 185.1933pt.
 
-Overfull \hbox (37.13264pt too wide) detected at line 172
+Overfull \hbox (37.13264pt too wide) detected at line 174
 []
  []
 
 
-Overfull \hbox (3.6164pt too wide) detected at line 174
+Overfull \hbox (3.6164pt too wide) detected at line 176
 [][]
  []
 
 
-Overfull \hbox (6.52324pt too wide) detected at line 176
+Overfull \hbox (6.52324pt too wide) detected at line 178
 [][]
  []
 
 
-Overfull \hbox (32.20663pt too wide) detected at line 183
+Overfull \hbox (32.20663pt too wide) detected at line 185
 []
  []
 
 
-Overfull \hbox (19.16338pt too wide) detected at line 184
+Overfull \hbox (19.16338pt too wide) detected at line 186
 [][]
  []
 
 
-Overfull \hbox (1.13715pt too wide) detected at line 185
+Overfull \hbox (1.13715pt too wide) detected at line 187
 [][]
  []
 
 [2 <./fork_join_intuition.png>]
-Overfull \hbox (12.99112pt too wide) detected at line 210
+Overfull \hbox (12.99112pt too wide) detected at line 212
 [] []
  []
 
 <new_array_A.png, id=24, 753.81625pt x 160.6pt>
 File: new_array_A.png Graphic file (type png)
  <use new_array_A.png>
-Package pdftex.def Info: new_array_A.png used on input line 228.
+Package pdftex.def Info: new_array_A.png used on input line 230.
 (pdftex.def)             Requested size: 226.14662pt x 48.18036pt.
 
 <set_A_return_B.png, id=25, 749.80125pt x 283.0575pt>
 File: set_A_return_B.png Graphic file (type png)
  <use set_A_return_B.png>
-Package pdftex.def Info: set_A_return_B.png used on input line 239.
+Package pdftex.def Info: set_A_return_B.png used on input line 241.
 (pdftex.def)             Requested size: 224.94211pt x 84.9179pt.
 
 <set_old_array.png, id=26, 756.8275pt x 409.53pt>
 File: set_old_array.png Graphic file (type png)
  <use set_old_array.png>
-Package pdftex.def Info: set_old_array.png used on input line 250.
+Package pdftex.def Info: set_old_array.png used on input line 252.
 (pdftex.def)             Requested size: 227.05pt x 122.85994pt.
 
 [3 <./new_array_A.png> <./set_A_return_B.png> <./set_old_array.png>]
 (/usr/local/texlive/2015basic/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2014/09/06 1.5e listings language file
 )
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 288.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 290.
 
 
 (/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 288.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 290.
 
-Overfull \hbox (3.00247pt too wide) in paragraph at lines 318--319
+Overfull \hbox (3.00247pt too wide) in paragraph at lines 320--321
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
  []
 
-LaTeX Font Info:    Try loading font information for OML+ptm on input line 350.
+LaTeX Font Info:    Try loading font information for OML+ptm on input line 352.
 
 (/usr/local/texlive/2015basic/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
 LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <9> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 350.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 352.
  [4]
 (./paper.bbl
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -377,10 +377,10 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 ] (./paper.aux) ) 
 Here is how much of TeX's memory you used:
- 4185 strings out of 494501
- 57558 string characters out of 6167029
- 174134 words of memory out of 5000000
- 7390 multiletter control sequences out of 15000+600000
+ 4188 strings out of 494501
+ 57602 string characters out of 6167029
+ 174193 words of memory out of 5000000
+ 7393 multiletter control sequences out of 15000+600000
  31461 words of font info for 62 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
  38i,7n,42p,729b,1206s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -402,7 +402,7 @@ c/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2015basic/tex
 mf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2015basic/texmf-d
 ist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2015basic/texmf-dist/f
 onts/type1/urw/times/utmri8a.pfb>
-Output written on paper.pdf (6 pages, 373319 bytes).
+Output written on paper.pdf (6 pages, 373353 bytes).
 PDF statistics:
  93 PDF objects out of 1000 (max. 8388607)
  63 compressed objects within 1 object stream
