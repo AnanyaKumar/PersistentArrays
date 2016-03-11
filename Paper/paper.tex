@@ -125,10 +125,10 @@ We give a wait-free concurrent implementation that uses careful synchronization.
 We use a standard applicative-order language defined as follows:
 $$e = x \; | \; c  \; | \; \lambda x.e \; | \; e_1 e_2 \; | \; e_1 || e_2 \; | \; \text{if } e_1 \text{ then } e_2 \text{ else } e_3$$
 
-$L$ contains the usual arithmetic types, such as the natural numbers, and numerical operations such as sums and products. Our dynamics are given by the judgement $e \Downarrow v$ which means that expression $e$ evaluates to $v$. Dynamics for function application and fork-join are given as examples.
+$L$ contains the usual arithmetic types, such as the natural numbers, and numerical operations such as sums and products. Lambda expressions and constants (including arrays) are terminal values in our language. Our dynamics are given by the judgement $e \Downarrow v$ which means that expression $e$ evaluates to $v$. Dynamics for function application and fork-join are given as examples.
 
 $$\frac{e_1 \Downarrow v_1 \;\;\; e_2 \Downarrow v_2}{e_1 || e_2 \Downarrow (v_1, v_2)} \text{ (fork-join)}$$
-$$\frac{f \Downarrow \lambda x . e \;\;\; y \Downarrow v}{f \; y \Downarrow [v/x]e} \text{ (function-app)}$$
+$$\frac{f \Downarrow \lambda x . e \;\;\; y \Downarrow v \;\;\; [v/x]e \Downarrow v'}{f \; y \Downarrow v'} \text{ (function-app)}$$
 
 The language also includes 3 functions for working with arrays: tabulate, get, and set. The dynamics for tabulate is given below:
 $$\frac{f(1) \Downarrow v_1, ..., f(n) \Downarrow v_n}{\text{tabulate} \; f \; n \Downarrow [1 \mapsto v_1, ..., n \mapsto v_n]}$$
@@ -165,7 +165,15 @@ We cannot make any assumptions about how the instructions in different branches 
 Our cost dynamics are defined by the following judgement, where $\delta$ is the store, $e$ is the expression, $\delta'$ is the new store, $v$ is the value returned by evaluating $e$, $w$ is the work, and $s$ is the span.
 $$\delta; e \boldsymbol\Downarrow \delta'; v; w; s$$
 
-We give the cost dynamics for expressions in the language: (insert cost dynamics for standard functions later)
+We give the cost dynamics for arbitrary expressions in our language:
+
+$$\frac{}{\delta; c \Downarrow \delta; c; 1; 1} \text{ (constants)}$$
+
+$$\frac{\delta; e_1 \Downarrow \delta'; \lambda x . e; w_1 ; s_1 \;\;\; \delta'; e_2 \Downarrow \delta'';v; w_2 ; s_2 \;\;\; \delta''; [v/x]e \Downarrow \delta'''; v'; w_3 ; s_3}{\delta; e_1 \; e_2 \Downarrow \delta'''; v'; 1+w_1+w_2+w_3; 1+s_1+s_2+s_3}$$
+
+$$\frac{\delta; e_1 \Downarrow \delta'; true; w_1; s_1 \;\;\; \delta'; e_2 \Downarrow \delta''; v; w_2; s_2}{\delta; \text{if } e_1 \text{ then } e_2 \text{ else } e_3 \Downarrow \delta''; v; 1+w_1+w_2; 1+s_1+s_2} \text{ (if-true)}$$
+
+$$\frac{\delta; e_1 \Downarrow \delta'; false; w_1; s_1 \;\;\; \delta'; e_3 \Downarrow \delta''; v; w_2; s_2}{\delta; \text{if } e_1 \text{ then } e_2 \text{ else } e_3 \Downarrow \delta''; v; 1+w_1+w_2; 1+s_1+s_2} \text{ (if-false)}$$
 
 Arrays are represented by $(l, V)$ where $l$ is a label that uniquely identifies the array, and $V$ contains the values in the array. $V[i]$ is the $i^{\text{th}}$ value in the array. If the set function has been called on an array, the array is an interior array (represented by $-$), otherwise the array is a leaf array (represented by $+$). 
 
