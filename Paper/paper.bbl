@@ -1,9 +1,22 @@
-\begin{thebibliography}{7}
+\begin{thebibliography}{13}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aasa et~al.(1988)Aasa, Holmstr{\"{o}}m, and Nilsson]{AHN88}
+A.~Aasa, S.~Holmstr{\"{o}}m, and C.~Nilsson.
+\newblock An efficiency comparison of some representations of purely functional
+  arrays.
+\newblock \emph{{BIT}}, 28\penalty0 (3):\penalty0 490--503, 1988.
+
+\bibitem[Ariola et~al.(1995)Ariola, Maraist, Odersky, Felleisen, and
+  Wadler]{AMOFW95}
+Z.~M. Ariola, J.~Maraist, M.~Odersky, M.~Felleisen, and P.~Wadler.
+\newblock A call-by-need lambda calculus.
+\newblock In \emph{Proc. ACM SIGPLAN-SIGACT Symposium on Principles of
+  Programming Languages (POPL)}, pages 233--246, 1995.
 
 \bibitem[Chuang(1992)]{chuang}
 T.-R. Chuang.
@@ -14,13 +27,23 @@ T.-R. Chuang.
 \newblock ISBN 0-387-55253-7.
 \newblock URL \url{http://dl.acm.org/citation.cfm?id=145055.145076}.
 
-\bibitem[Harper(2012)]{harper}
-P.~R. Harper.
-\newblock \emph{Practical Foundations for Programming Languages}.
-\newblock Cambridge University Press, New York, NY, USA, 2012.
-\newblock ISBN 1107029570, 9781107029576.
+\bibitem[Driscoll et~al.(1989)Driscoll, Sarnak, Sleator, and Tarjan]{DSST89}
+J.~R. Driscoll, N.~Sarnak, D.~D. Sleator, and R.~E. Tarjan.
+\newblock Making data structures persistent.
+\newblock \emph{J. Comput. Syst. Sci.}, 38\penalty0 (1), 1989.
 
-\bibitem[Hudak(1986)]{hudak}
+\bibitem[Girard(1987)]{Girard87}
+J.~Girard.
+\newblock Linear logic.
+\newblock \emph{Theor. Comput. Sci.}, 50:\penalty0 1--102, 1987.
+
+\bibitem[Guzm{\'{a}}n and Hudak(1990)]{GH90}
+J.~C. Guzm{\'{a}}n and P.~Hudak.
+\newblock Single-threaded polymorphic lambda calculus.
+\newblock In \emph{Proc. Symposium on Logic in Computer Science (LICS)}, pages
+  333--343, 1990.
+
+\bibitem[Hudak(1986)]{Hudak86}
 P.~Hudak.
 \newblock A semantic model of reference counting and its abstraction (detailed
   summary).
@@ -31,27 +54,36 @@ P.~Hudak.
 \newblock \doi{10.1145/319838.319876}.
 \newblock URL \url{http://doi.acm.org/10.1145/319838.319876}.
 
+\bibitem[Hudak and Bloss(1985)]{HB85}
+P.~Hudak and A.~G. Bloss.
+\newblock The aggregate update problem in functional programming systems.
+\newblock In \emph{{ACM} Symposium on Principles of Programming Languages
+  (POPL)}, pages 300--314, 1985.
+
+\bibitem[King and Launchbury(1995)]{KL95}
+D.~J. King and J.~Launchbury.
+\newblock Structuring depth-first search algorithms in haskell.
+\newblock In \emph{{ACM} {SIGPLAN-SIGACT} Symposium on Principles of
+  Programming Languages (POPL)}, pages 344--354, 1995.
+
+\bibitem[Moggi(1989)]{Moggi89}
+E.~Moggi.
+\newblock Computational lambda-calculus and monads.
+\newblock In \emph{Proc. Symposium on Logic in Computer Science (LICS)}, pages
+  14--23, 1989.
+
 \bibitem[O'Neill(2000)]{oneill}
 M.~E. O'Neill.
 \newblock \emph{Version Stamps for Functional Arrays and Determinacy Checking:
   Two Applications of Ordered Lists for Advanced Programming Languages}.
 \newblock PhD thesis, Simon Fraser University, 2000.
 
-\bibitem[Reynolds(2002)]{reynolds}
-J.~C. Reynolds.
-\newblock Separation logic: A logic for shared mutable data structures.
-\newblock In \emph{Proceedings of the 17th Annual IEEE Symposium on Logic in
-  Computer Science}, LICS '02, pages 55--74, Washington, DC, USA, 2002. IEEE
-  Computer Society.
-\newblock ISBN 0-7695-1483-9.
-\newblock URL \url{http://dl.acm.org/citation.cfm?id=645683.664578}.
-
-\bibitem[Wadler(1990)]{wadler-lintypes}
+\bibitem[Wadler(1990)]{Wadler90}
 P.~Wadler.
 \newblock Linear types can change the world!
 \newblock In \emph{PROGRAMMING CONCEPTS AND METHODS}. North, 1990.
 
-\bibitem[Wadler(1995)]{wadler-monads}
+\bibitem[Wadler(1995)]{Wadler95}
 P.~Wadler.
 \newblock Monads for functional programming.
 \newblock In \emph{Advanced Functional Programming, First International Spring
