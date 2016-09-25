@@ -1,36 +1,14 @@
-structure Farray = struct
+structure Sequence = struct
   type 'a arraydata = (int ref) * 'a array * ('a PushArray.t) array
 
   type 'a t = int * 'a arraydata
 
-  fun farray size init =
+  fun seq size init =
     (1, (ref 1, 
     Array.array(size, init), 
     Array.tabulate(size, fn x => PushArray.pusharray (0, init))))
 
   fun size (v, (ref v', vals, logs)) = Array.length(vals)
-
-  fun copyad (v, (ref vr, vals, logs)) =
-    (ref vr,
-    Array.tabulate(Array.length(vals), fn i => 
-      get ((v, (ref vr, vals, logs))) i),
-    Array.tabulate(Array.length(vals), 
-      fn i => PushArray.pusharray (0, Array.sub(vals,0))))
-
-  fun cmpswap addr oldval newval =
-    if !addr = oldval then (addr := newval; true) else false
-
-  fun set (v, (vr, vals, logs)) i value =
-    if not(!vr mod (10 * (Array.length vals)) = 0) andalso cmpswap vr v (v+1) then
-      (PushArray.push (Array.sub(logs, i)) (v, Array.sub(vals, i));
-      Array.update(vals, i, value);
-      (v+1, (vr, vals, logs)))
-    else
-      let 
-        val (vr', vals', logs') = copyad (v, (vr, vals, logs))
-      in 
-        Array.update(vals', i, value); (v, (ref v, vals', logs'))
-      end
 
   fun binrecur log version lower upper =
     let 
@@ -59,4 +37,26 @@ structure Farray = struct
           else binsearch curlog v
         end
     end
+
+  fun copyad (v, (ref vr, vals, logs)) =
+    (ref vr,
+    Array.tabulate(Array.length(vals), fn i => 
+      get ((v, (ref vr, vals, logs))) i),
+    Array.tabulate(Array.length(vals), 
+      fn i => PushArray.pusharray (0, Array.sub(vals,0))))
+
+  fun cmpswap addr oldval newval =
+    if !addr = oldval then (addr := newval; true) else false
+
+  fun set (v, (vr, vals, logs)) i value =
+    if not(!vr mod (10 * (Array.length vals)) = 0) andalso cmpswap vr v (v+1) then
+      (PushArray.push (Array.sub(logs, i)) (v, Array.sub(vals, i));
+      Array.update(vals, i, value);
+      (v+1, (vr, vals, logs)))
+    else
+      let 
+        val (vr', vals', logs') = copyad (v, (vr, vals, logs))
+      in 
+        Array.update(vals', i, value); (v, (ref v, vals', logs'))
+      end
 end
