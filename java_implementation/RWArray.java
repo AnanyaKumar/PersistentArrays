@@ -10,8 +10,6 @@
  * RWArray functions are guaranteed to act as a memory
  * barrier/fence.
  *
- * @author Ananya Kumar
- *
  */
 
 public class RWArray<T> {

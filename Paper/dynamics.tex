@@ -1,0 +1,26 @@
+\section{Language}
+\label{sec:dynamics}
+
+The notation we use for our language and dynamics is from ~\cite{pfpl2}.
+
+We use a standard applicative-order, call by value source language defined as follows:
+$$e = x \; | \; c  \; | \; \lambda (x,y).e \; 
+| \; e_1 e_2 \; 
+| \; (e_1, e_2) \; 
+| \; (e_1~||~e_2) \; 
+| \; \text{if } e_1 \; e_2 \; e_3$$
+
+The constants $c$ contains the usual arithmetic types, such as the
+natural numbers and numerical functions. The expression $(e_1||e_2)$
+indicates that the two expressions can run in parallel, returning a
+pair $(v_1, v_2)$ when both expressions are fully evaluated, while
+$(e_1,e_2)$ generates a pair sequentially.  Sequential and parallel
+pairs only differ in the cost dynamics---the value dynamics are
+identical. Our language can be augmented to add support for recursion using \func{letrec} or a fixed point combinator.
+
+\begin{definition}
+The terminal (fully evaluated) values are lambda expressions, constants,
+and pairs of terminal values, and are denoted by the judgement \func{val}.
+\end{definition}
+
+Our language also contains functions to work with sequences. \new{}$(n,v)$ evaluates to a sequence of size $n$ with the value $v$ at each index. \get{}$(A, i)$ evaluates to the $i^{\text{th}}$ element of sequence $A$. \set{}$(A, i, v)$ evaluates to a new sequence where the $i^{\text{th}}$ element of $A$ is substituted with $v$.

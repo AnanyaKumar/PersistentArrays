@@ -1,7 +1,7 @@
-structure RWArray = struct
+structure PushArray = struct
   type 'a t = (int * int * ('a array)) ref
 
-  fun rwarray init = ref(10, 0, Array.array(10,init))
+  fun pusharray init = ref(10, 0, Array.array(10,init))
 
   fun push (rwa : 'a t) (v : 'a) =
     let 
@@ -14,7 +14,6 @@ structure RWArray = struct
         in 
           Array.copy{src = data, dst = newdata, di = 0};
           Array.update(newdata, size, v);
-          rwa := (newcap, size, newdata);
           rwa := (newcap, size+1, newdata)
         end
       else 

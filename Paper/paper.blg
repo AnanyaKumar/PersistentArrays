@@ -3,44 +3,52 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: paper.aux
 The style file: abbrvnat.bst
 Database file #1: references.bib
-You've used 7 entries,
+A bad cross reference---entry "concurrent-logical"
+refers to entry "DBLP:conf/csl/2012", which doesn't exist
+A bad cross reference---entry "concurrent-logical2"
+refers to entry "DBLP:conf/popl/2013", which doesn't exist
+Warning--I didn't find a database entry for "DBLP:conf/popl/2013"
+Warning--I didn't find a database entry for "DBLP:conf/csl/2012"
+Warning--can't use both author and editor fields in persistentufds
+You've used 22 entries,
             2773 wiz_defined-function locations,
-            651 strings with 6055 characters,
-and the built_in function-call counts, 3099 in all, are:
-= -- 328
-> -- 70
-< -- 11
-+ -- 28
-- -- 21
-* -- 181
-:= -- 464
-add.period$ -- 36
-call.type$ -- 7
-change.case$ -- 26
-chr.to.int$ -- 7
-cite$ -- 14
-duplicate$ -- 183
-empty$ -- 293
-format.name$ -- 28
-if$ -- 699
+            771 strings with 9149 characters,
+and the built_in function-call counts, 11272 in all, are:
+= -- 1119
+> -- 442
+< -- 29
++ -- 154
+- -- 132
+* -- 804
+:= -- 1631
+add.period$ -- 97
+call.type$ -- 22
+change.case$ -- 107
+chr.to.int$ -- 22
+cite$ -- 45
+duplicate$ -- 581
+empty$ -- 987
+format.name$ -- 168
+if$ -- 2494
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 7
-newline$ -- 53
-num.names$ -- 28
-pop$ -- 57
+missing$ -- 23
+newline$ -- 145
+num.names$ -- 88
+pop$ -- 220
 preamble$ -- 1
-purify$ -- 21
+purify$ -- 88
 quote$ -- 0
-skip$ -- 130
+skip$ -- 460
 stack$ -- 0
-substring$ -- 126
-swap$ -- 40
-text.length$ -- 4
+substring$ -- 556
+swap$ -- 140
+text.length$ -- 12
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 72
-warning$ -- 0
-while$ -- 33
+type$ -- 232
+warning$ -- 1
+while$ -- 114
 width$ -- 0
-write$ -- 129
+write$ -- 356
+(There were 2 error messages)

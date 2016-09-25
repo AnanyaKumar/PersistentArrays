@@ -2,8 +2,6 @@
  * Wrapper for regular Java Arrays to
  * facilitate comparisons with Persistent Arrays.
  *
- * @author Ananya Kumar
- *
  */
 
 public class STArray<T> implements ArrayInterface<T> {

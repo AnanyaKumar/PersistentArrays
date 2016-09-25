@@ -1,8 +1,6 @@
 /*
  * Simple unit test for PersistentArray.
  *
- * @author Ananya Kumar
- *
  */
 
 import java.util.*;

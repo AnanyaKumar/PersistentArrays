@@ -1,4 +1,4 @@
-\begin{thebibliography}{13}
+\begin{thebibliography}{22}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -17,6 +17,39 @@ Z.~M. Ariola, J.~Maraist, M.~Odersky, M.~Felleisen, and P.~Wadler.
 \newblock A call-by-need lambda calculus.
 \newblock In \emph{Proc. ACM SIGPLAN-SIGACT Symposium on Principles of
   Programming Languages (POPL)}, pages 233--246, 1995.
+
+\bibitem[Birkedal et~al.(2012)Birkedal, Sieczkowski, and
+  Thamsborg]{concurrent-logical}
+L.~Birkedal, F.~Sieczkowski, and J.~Thamsborg.
+\newblock A concurrent logical relation.
+\newblock In \emph{Computer Science Logic (CSL'12) - 26th International
+  Workshop/21st Annual Conference of the EACSL, {CSL} 2012, September 3-6,
+  2012, Fontainebleau, France}, pages 107--121, 2012.
+\newblock \doi{10.4230/LIPIcs.CSL.2012.107}.
+\newblock URL \url{http://dx.doi.org/10.4230/LIPIcs.CSL.2012.107}.
+
+\bibitem[Blelloch and Greiner(1995)]{BG95}
+G.~Blelloch and J.~Greiner.
+\newblock Parallelism in sequential functional languages.
+\newblock In \emph{Proceedings of the Seventh International Conference on
+  Functional Programming Languages and Computer Architecture}, FPCA '95, pages
+  226--237, 1995.
+
+\bibitem[Blumofe and Leiserson(1999)]{BlumofeLeiserson}
+R.~D. Blumofe and C.~E. Leiserson.
+\newblock Scheduling multithreaded computations by work stealing.
+\newblock \emph{J. ACM}, 46\penalty0 (5):\penalty0 720--748, Sept. 1999.
+\newblock ISSN 0004-5411.
+\newblock \doi{10.1145/324133.324234}.
+\newblock URL \url{http://doi.acm.org/10.1145/324133.324234}.
+
+\bibitem[Brent(1974)]{brent}
+R.~P. Brent.
+\newblock The parallel evaluation of general arithmetic expressions.
+\newblock \emph{J. ACM}, 21\penalty0 (2):\penalty0 201--206, Apr. 1974.
+\newblock ISSN 0004-5411.
+\newblock \doi{10.1145/321812.321815}.
+\newblock URL \url{http://doi.acm.org/10.1145/321812.321815}.
 
 \bibitem[Chuang(1992)]{chuang}
 T.-R. Chuang.
@@ -43,6 +76,21 @@ J.~C. Guzm{\'{a}}n and P.~Hudak.
 \newblock In \emph{Proc. Symposium on Logic in Computer Science (LICS)}, pages
   333--343, 1990.
 
+\bibitem[Harper(2016)]{pfpl2}
+R.~Harper.
+\newblock \emph{Practical Foundations for Programming Languages, 2nd edition}.
+\newblock Cambridge University Press, 2016.
+\newblock ISBN 9781107150300.
+
+\bibitem[Herlihy and Wing(1990)]{linearizability}
+M.~P. Herlihy and J.~M. Wing.
+\newblock Linearizability: A correctness condition for concurrent objects.
+\newblock \emph{ACM Trans. Program. Lang. Syst.}, 12\penalty0 (3):\penalty0
+  463--492, July 1990.
+\newblock ISSN 0164-0925.
+\newblock \doi{10.1145/78969.78972}.
+\newblock URL \url{http://doi.acm.org/10.1145/78969.78972}.
+
 \bibitem[Hudak(1986)]{Hudak86}
 P.~Hudak.
 \newblock A semantic model of reference counting and its abstraction (detailed
@@ -59,6 +107,24 @@ P.~Hudak and A.~G. Bloss.
 \newblock The aggregate update problem in functional programming systems.
 \newblock In \emph{{ACM} Symposium on Principles of Programming Languages
   (POPL)}, pages 300--314, 1985.
+
+\bibitem[Italiano and Sarnak(1991)]{persistentufds}
+G.~F. Italiano and N.~Sarnak.
+\newblock \emph{Fully persistent data structures for disjoint set union
+  problems}, pages 449--460.
+\newblock Springer Berlin Heidelberg, Berlin, Heidelberg, 1991.
+\newblock ISBN 978-3-540-47566-8.
+\newblock \doi{10.1007/BFb0028283}.
+\newblock URL \url{http://dx.doi.org/10.1007/BFb0028283}.
+
+\bibitem[Jones(1983)]{rely-guarantee}
+C.~B. Jones.
+\newblock Tentative steps toward a development method for interfering programs.
+\newblock \emph{ACM Trans. Program. Lang. Syst.}, 5\penalty0 (4):\penalty0
+  596--619, Oct. 1983.
+\newblock ISSN 0164-0925.
+\newblock \doi{10.1145/69575.69577}.
+\newblock URL \url{http://doi.acm.org/10.1145/69575.69577}.
 
 \bibitem[King and Launchbury(1995)]{KL95}
 D.~J. King and J.~Launchbury.
@@ -77,6 +143,16 @@ M.~E. O'Neill.
 \newblock \emph{Version Stamps for Functional Arrays and Determinacy Checking:
   Two Applications of Ordered Lists for Advanced Programming Languages}.
 \newblock PhD thesis, Simon Fraser University, 2000.
+
+\bibitem[Turon et~al.(2013)Turon, Thamsborg, Ahmed, Birkedal, and
+  Dreyer]{concurrent-logical2}
+A.~J. Turon, J.~Thamsborg, A.~Ahmed, L.~Birkedal, and D.~Dreyer.
+\newblock Logical relations for fine-grained concurrency.
+\newblock In \emph{The 40th Annual {ACM} {SIGPLAN-SIGACT} Symposium on
+  Principles of Programming Languages, {POPL} '13, Rome, Italy - January 23 -
+  25, 2013}, pages 343--356, 2013.
+\newblock \doi{10.1145/2429069.2429111}.
+\newblock URL \url{http://doi.acm.org/10.1145/2429069.2429111}.
 
 \bibitem[Wadler(1990)]{Wadler90}
 P.~Wadler.

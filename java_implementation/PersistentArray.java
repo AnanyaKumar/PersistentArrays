@@ -16,8 +16,6 @@
  * memory barriers (on top of performing their
  * intended functionality).
  *
- * @author Ananya Kumar
- *
  */
 
 import java.util.*;

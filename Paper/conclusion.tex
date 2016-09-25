@@ -1,0 +1,12 @@
+\section{Future Work}
+\label{sec:conclusion}
+\begin{enumerate}
+\item We do not have formal proofs for the cost bounds of our sequence implementation. Current techniques for analyzing concurrent data structures focus on proving correctness. Coming up with a framework to prove the costs of a concurrent implementation is an exciting opportunity. Note that our main results still hold without these proofs, because we present a general way to analyze data types where operating on leaf values and interior values have different costs.
+
+\item Extending the approach of allowing operations on interior data values to be more expensive than for leaf data values to other data types (for example unordered sets or functional disjoint sets) is a possible future direction.
+
+\item We conjecture that it is not possible for a sequence implementation to have constant (worst case) costs for all operations, which would ground the need for an implementation where costs for leaf and interior versions are different.
+
+\item Our cost dynamics could be extended to situations that generalize beyond separate costs for interior and leaf versions. In particular, our interleaved structural dynamics does not give a tight bound for the cost of our sequence implementation. In our implementation, accessing a value in an interior version could involve constant work if there are no (or a constant number of) log entries at that index.
+
+\end{enumerate}

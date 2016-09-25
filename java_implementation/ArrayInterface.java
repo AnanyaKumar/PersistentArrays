@@ -3,8 +3,6 @@
  * Set returns the array because we are simulating 
  * functional programming semantics.
  *
- * @author Ananya Kumar
- *
  */
 
 public interface ArrayInterface<T> {

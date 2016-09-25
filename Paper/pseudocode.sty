@@ -1,0 +1,40 @@
+\usepackage{listings}
+
+\newdimen\zzsize
+\zzsize=8pt
+\newdimen\kwsize
+\kwsize=8pt
+
+\newcommand{\basicstyle}{\fontsize{\zzsize}{1.1\zzsize}\ttfamily}
+\newcommand{\keywordstyle}{\fontsize{\kwsize}{1.1\kwsize}\normalfont\bf}
+\newlength{\zzlstwidth}
+\settowidth{\zzlstwidth}{{\basicstyle~}}
+\newcommand{\lcm}{}
+
+\lstset{
+  xleftmargin=5.0ex,
+  basewidth=\zzlstwidth,
+  basicstyle=\basicstyle,
+  captionpos=b,
+  numbers=left, numberstyle=\small, numbersep=8pt,
+  keywordstyle=\keywordstyle,
+  keywords={signature,sig,structure,struct,function,fun,case,of,type,datatype,let,val,fn,in,end,as,functor,alloc,if,then,else,while,with,and},
+  commentstyle=\rmfamily\slshape,
+  morecomment=[l]{\%},
+  lineskip={1.5pt},
+  columns=[l]fullflexible,
+  keepspaces=true,
+  mathescape=true,
+  escapeinside={@}{@},
+% NOTE: need TWO sets of braces around each definition below!
+  literate={requires}{{$\lcm\text{\keywordstyle \% requires}$}}6
+           {returns}{{$\lcm\text{\keywordstyle \% returns}$}}6
+           {=}{{$\lcm=$}}2 
+           {(}{{$($}}2
+           {)}{{$)$}}2 
+           {**}{{$\lcm\times$}}2 
+           {||}{{$\lcm\Vert$}}2 
+           {=>}{{$\lcm\boldsymbol\Rightarrow$}}2 
+           {->}{{$\lcm\rightarrow$}}2 
+}
+

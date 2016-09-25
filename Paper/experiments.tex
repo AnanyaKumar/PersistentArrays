@@ -1,0 +1,37 @@
+\section{Test Results}
+\label{sec:experiments}
+
+Besides implementing our functional arrays in SML, we implemented our arrays in Java and compared the performance of functional arrays with regular Java arrays. Java has a relaxed memory consistency model (not a sequentially consistent memory model), so we added memory fences in suitable locations to prevent the compiler and machine from reordering instructions.
+
+We compared the performance of leaf functional arrays and regular Java arrays of size 3,000,000 on a dual-core machine. The arrays occupied 12mb of space, and the machine had 3mb of shared L3 cache, so we ensured that the entire arrays cannot be cached. Since many of our tests involved looping and accessing elements in the array, without performing any useful computations, we disabled compiler optimizations (which optimize away the loops).
+
+We ran each test 5 times, and took the average time. We do not show standard errors because we were interested in orders of magnitude, however all timings differed from the mean by at most $15\%$ of the mean time.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{ |c|c|c|c| } 
+ \hline
+  & Regular & Functional & Slowdown \\ 
+ \hline
+ Seq. reading array & 1.35s & 1.50s & 10.8\% \\ 
+ \hline
+ Rand. reading array & 8.88s & 9.10s & 3.4\% \\ 
+ \hline
+ Seq. writing to array & 2.78s & 9.14s & 3.3$\times$ \\ 
+ \hline
+ Rand. writing to array & 5.57s & 13.2s & 2.4$\times$ \\ 
+ \hline
+\end{tabular}
+\caption{Speed of leaf functional arrays vs. regular arrays in Java}
+\label{mytable}
+\end{table}
+
+In the sequential read test, after creating an empty array, we sequentially get elements at indices $0,1,2,...$, starting over at $0$ when we reach the end of the array. In the random read test, we repeatedly generate a random number $r$ and get the $r^{\text{th}}$ element of the array. We performed 15,000,000 accesses in both of these tests.
+
+In the sequential write test, starting from an empty array, we sequentially set the elements at indices $0,1,2,...$, starting over at $0$ when we reach the end of the array. In the random write test, we repeatedly generate a random number $r$ and set the $r^{\text{th}}$ element of the array. We performed 5,000,000 writes in both of these tests.
+
+The results suggest that operations on leaf functional arrays are almost as efficient as regular arrays. The additional 2-3 times slowdown in \set{} is expected because we incur an additional cache miss when we insert a log entry. Note that similar benchmarks on alternative implementations of functional arrays, for example persistent binary search trees, are likely to be slower by a much larger factor.
+
+Additionally, we compared the time taken to access elements in leaf arrays and interior arrays in a specific benchmark. We wrote 20,000,000 values into random indices of an array of size 2,100,000. We then read 5,000,000 values from random indices of the leaf array and the interior array. Reading from the interior array was $4.5 \times$ slower, which is not too much of a slowdown.
+
+We also performed two simple tests to profile multi-threaded accesses in our functional array implementation. In the first test, 2 threads simultaneously accessed 500,000 random elements in an array. The total time taken was $1.77 \times$ less than a single thread accessing 1,000,000 random elements in the array. In the second test, 2 threads simultaneously accessed the same element 500,000 times. The total time taken was $1.76 \times$ less than a single thread accessing the element 1,000,000 times. The results of the second test are particularly good. We cannot expect a $2\times$ speedup because the element will keep moving between the L1 caches of the two cores. However, the speedup of $1.76 \times$ means that the accesses are not serialized (as they would be with a per-element lock).

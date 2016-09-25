@@ -1,0 +1,68 @@
+\section{Evaluational Cost Dynamics}
+\label{sec:evaluational}
+
+The evaluational (big-step) cost dynamics gives an easy, deterministic way to compute the cost of a program without having to reason about multiple interleavings. In this section, we give the rules for the evaluational dynamics. In section~\ref{sec:costproof}, we prove that the costs in the evaluational dynamics are a tight upper bound for the costs in the structural dynamics. Our results can be easily extended for data types besides sequences (like unordered sets) even if there are multiple varieties of \get{} and \set{} functions.
+
+To handle the non-determinism in fork-join, we first compute the worst-case cost of each fork separately. Then for sequences that are used in both forks, we add additional work at the join point. To compute the additional work at the join point, we keep track of the number of \get{}s to leaf values on each side of the fork. If the value was \set{} on the other side of the fork, then the \set{} might have happened before the \get{}s, so we need to charge additional work for the \get{}s.
+
+Our evaluational dynamics is defined by the following judgement, where $\delta$ is the store, $e$ is the expression, $\delta'$ is the new store, $v$ is the value that $e$ evaluates to, $w$ is the work, and $s$ is the span.
+$$\delta, e \boldsymbol\Downarrow \delta', v, w, s$$
+
+As in the previous section, sequences are represented by $(l, V)$ where $l$ is a label into the store $\delta$ and $V$ is a list of the elements in the sequence. The store is a mapping from labels to $(+/-, c)$, where $c$ represents the number of leaf \get{}s on the value indexed by the label. $L(\delta)$ denotes the set of labels in the store $\delta$.
+
+The rules in the evaluational dynamics are given in figure \ref{fig:evaluational-dynamics}. Note that \get{} costs $g_l(V)$ instead of $g_i(V)$ on a leaf value $V$ but we increment the counter of leaf \get{}s in the store. 
+
+\begin{figure}[!ht]
+$$\frac{}{\delta, c \Downarrow \delta, c, 1, 1} \text{ (constants)}$$
+
+$$\frac{\begin{gathered}\delta, e_1 \Downarrow \delta', \lambda (x,y) . e, w_1 , s_1 \;\;\; \delta', e_2 \Downarrow \delta'',(v_1, v_2), w_2 , s_2 \;\;\; \\ \delta'', [v_1/x][v_2/y]e \Downarrow \delta''', v', w_3 , s_3\end{gathered}}{\delta, e_1 \; e_2 \Downarrow \delta''', v', 1+w_1+w_2+w_3, 1+s_1+s_2+s_3} \text{ (func-app)}$$
+
+$$\frac{\delta, e_1 \Downarrow \delta', true, w_1, s_1 \;\;\, \delta', e_2 \Downarrow \delta'', v, w_2, s_2}{\delta, \text{if } e_1 \; e_2 \; e_3 \Downarrow \delta'', v, 1+w_1+w_2, 1+s_1+s_2} \text{ (if-true)}$$
+
+$$\frac{\delta, e_1 \Downarrow \delta', false, w_1, s_1 \;\;\; \delta', e_3 \Downarrow \delta'', v, w_2, s_2}{\delta, \text{if } e_1 \; e_2 \; e_3 \Downarrow \delta'', v, 1+w_1+w_2, 1+s_1+s_2} \text{ (if-false)}$$
+
+$$\frac{\delta, e \Downarrow \delta', a, w, s \;\;\; l \not\in L(\delta')}{\begin{gathered}\delta, \tnew{}(e) \Downarrow \delta'[l \mapsto (+,0)], \overline{\mbox{\new{}}}(a), w + n(a), s+1\end{gathered}} \text{ (new)}$$
+
+$$\frac{A = (l,V) \;\;\; a \text{ val} \;\;\; \delta[l \mapsto (+, c)] \;\;\; l' \not\in L(\delta)}{\begin{gathered}\delta, \tset(A, a) \Downarrow \delta[l \mapsto (-, c), l' \mapsto (+, 0)], \\ (l', \overline{\mbox{\set{}}}(V, a)), s_l(V), 1\end{gathered}} \text{  (set-leaf)}$$
+
+$$\frac{A = (l,V) \;\;\; a \text{ val} \;\;\; \delta[l \mapsto (-, c)] \;\;\;  l' \not\in L(\delta)}{\begin{gathered}\delta, \tset(A, a) \Downarrow \delta[l' \mapsto (+, 0)], \\ (l', \overline{\mbox{\set{}}}(V, a)), s_i(V), 1\end{gathered}} \text{  (set-int)}$$
+
+$$\frac{\begin{gathered}\delta; e_1 \Downarrow \delta_1, A, w_1, s_1 \;\;\; \delta_1, e_2 \Downarrow \delta_2, a, w_2, s_2 \;\;\; \\ \delta_2, \tset(A, a) \Downarrow \delta', A', w', s' \end{gathered}}{\delta, \tset(e_1, e_2) \Downarrow \delta', A', w_1+w_2+w', s_1+s_2+s'} \text{ (set-eval)}$$  
+
+$$\frac{A = (l,V) \;\;\; a \text{ val} \;\;\; \delta[l \mapsto (+, c)]}{\begin{gathered}\delta, \tget{}(A, a) \Downarrow \delta[l \mapsto (+, c+1)], \\ \overline{\mbox{\get{}}}(V, a), g_l(V), 1\end{gathered}} \text{  (get-leaf)}$$
+
+$$\frac{A = (l,V) \;\;\; a \text{ val} \;\;\; \delta[l \mapsto (-, c)]}{\delta, \tget{}(A, a) \Downarrow \delta, \overline{\mbox{\get{}}}(V, a), g_i(V), 1} \text{  (get-interior)}$$
+
+$$\frac{\begin{gathered}\delta, e_1 \Downarrow \delta_1, A, w_1, s_1 \;\;\; \delta_1, e_2 \Downarrow \delta_2, a, w_2, s_2 \;\;\; \\ \delta_2, \tget{}(A, a) \Downarrow \delta', v', w', s' \end{gathered}}{\delta, \tget(e_1, e_2) \Downarrow \delta', v', w_1 + w_2 + w', s_1 + s_2 + s'}\text{ (get-eval)}$$
+
+$$\frac{\begin{gathered}\delta, e_L \Downarrow \delta_L, v_L, w_L, s_L \;\;\; \delta, e_R \Downarrow \delta_R, v_R, w_R, s_R \;\;\; \\ (L(\delta_L) \setminus L(\delta)) \cap (L(\delta_R) \setminus L(\delta)) = \emptyset\end{gathered}}{\delta, (e_L || e_R) \Downarrow \delta', (v_L, v_R), 1 + w_L + w_R + w', 1 + \max(s_L, s_R)} \text{  (fj)}$$
+
+\caption{Rules for the evaluational dynamics. $w'$ and $\delta'$ in the fork-join rule are defined in the paper.}
+\label{fig:evaluational-dynamics}
+\end{figure}
+
+The fork-join rule is the most interesting and requires a few definitions. Suppose we have expression $(e_L || e_R)$ with
+\[ \delta, e_L \Downarrow \delta_L, v_L, w_L, s_L \]
+\[ \delta, e_R \Downarrow \delta_R, v_R, w_R, s_R \]
+
+Further, suppose that $(L(\delta_L) \setminus L(\delta)) \cap (L(\delta_R) \setminus L(\delta)) = \emptyset$ (the new labels produced on both sides of the fork-join do not conflict). Consider a sequence $A = (l, V)$ with $\delta[l] = (s,c)$, $\delta_L[l] = (s_L, c + c_L)$, $\delta_R[l] = (s_R, c + c_R)$. When multiplying two signs or multiplying a sign with an integer, consider $+$ to be 1 and $-$ to be 0. 
+
+\func{Combine} describes how to combine store values on both sides of a fork-join. A sequence is a leaf iff it is a leaf on both sides of the fork-join. Leaf \get{}s on one side of the fork remain leaf \get{}s iff there were no calls to \set{} on the other side of the fork.
+\begin{equation*}
+  \begin{aligned}
+   \text{\func{combine}}&((s, c), (s_L, c + c_L), (s_R, c + c_R))= \\
+   &(s_L s_R, c + s_R c_L + s_L c_R)
+  \end{aligned}
+\end{equation*}
+$$\delta' = \; (\delta_L / \delta) \; \cup \; (\delta_R / \delta) \; \cup \bigcup_{l \in L(\delta)} [l \mapsto \text{\func{combine}}(\delta[l], \delta_L[l], \delta_R[l])]$$
+\func{Extrawork} gives the additional cost incurred if a sequence was modified on either side of a fork-join. If the value was interior before the fork-join, then all functions incurred their maximal cost and there is no additional cost. Otherwise, leaf \get{}s on one side of the fork are charged $g_i$ work iff the other side of the fork called \set{}. Additionally, if both sides of the fork called \set{}, then one of the \set{}s came first and has work $s_l$ and the subsequent \set{} has work $s_i$. We abuse notation so that $g_l, g_i, s_l, s_i$ directly take in a label $l$ instead of the corresponding sequence.
+\begin{equation*}
+  \begin{aligned}
+  \text{\func{extra}}&\text{\func{work}}(l, (s, c), (s_L, c + c_L), (s_R, c + c_R)) = \\
+  & ((\neg s_R) c_L  + (\neg s_L) c_R)(g_i(l)-g_l(l)) + \\
+  & (\neg s_R) (\neg s_L) (s_i(l)-s_l(l))
+ \end{aligned}
+\end{equation*}
+$$w' = \sum_{l \in L(\delta), \delta[l \mapsto (+, c)]} \text{\func{extrawork}}(l, \delta[l], \delta_L[l], \delta_R[l])$$
+Then, the fork-join cost dynamics are:
+$$\delta; (e_L || e_R) \Downarrow \delta'; (v_L || v_R); 1 + w_L + w_R + w'; 1 + \max(s_L, s_R)$$

@@ -1,0 +1,275 @@
+\subsection{Parallel Cost Analysis}
+
+\begin{theorem}
+Suppose that 
+$$\delta, e_0 \Downarrow \delta_E, e_E, w_E, s_E$$
+and consider arbitrary parallel transition sequence $T$ taking
+$$e_0 \to^n_{par} e_n$$
+Then $SP(T) \leq s_E$
+\end{theorem}
+
+\begin{proof}
+By induction on the rules of the evaluational dynamics. We prove the theorem for 2 of the rules in the evaluational dynamics: get and fork-join. The other cases follow from a similar line of reasoning.
+\\
+
+\noindent \textbf{Case get:} Suppose $e_0 = get(e_L, e_R)$ and
+$$\delta, e_L \Downarrow \delta_L, e_L', w_L, s_L$$
+$$\delta_L, e_R \Downarrow \delta_R, e_R', w_R, s_R$$
+$$\delta_R, get(e_L', e_R') \Downarrow \delta_E, e_E, 1, 1$$
+which gives us
+$$\delta, get(e_L, e_R) \Downarrow \delta_E, e_E, w_E, s_E$$
+with $s_E = s_L + s_R + 1$.
+
+The parallel structural dynamics first step the left argument to get, then the right argument, and finally evaluate the get. So we can split the parallel transition sequence $T$ into corresponding subsequences $T_L$, $T_R$, $T_g$. By the inductive hypothesis, $SP(T_L) \leq s_L$ and $SP(T_R) \leq s_R$. Also, $SP(T_g) = 1$. So $SP(T) = SP(T_L) + SP(T_R) + SP(T_g) \leq s_L + s_R + 1 = s_E$, and the claim holds.
+\\
+
+\noindent \textbf{Case fork-join}: Suppose $e_0 = (e_L || e_R)$ and
+$$\delta, e_L \Downarrow \delta_L, v_L, w_L, s_L$$
+$$\delta, e_R \Downarrow \delta_R, v_R, w_R, s_R$$
+which gives us
+$$\delta, (e_L || e_R) \Downarrow \delta', (v_1 || v_2), w_L + w_R + w', max(s_L, s_R)$$
+
+We can split the parallel transition sequence $T$ into two sub-sequences, $T_1$ where both sides of the fork-join take a step, and $T_2$ where only one side of the fork-join takes a step. We can project $T$ to a transition sequence $T_L$ for the left side of the fork-join  and a transition sequence $T_R$ for the right side of the fork-join. From the IH, $SP(T_L) \leq s_L$ and $SP(T_R) \leq s_R$. Then, $SP(T) \leq max(SP(T_L), SP(T_R)) \leq max(s_L, s_R) = s_E$, so the claim holds.
+\end{proof}
+
+The above theorem shows that the span in the evaluational dynamics is an upper bound for the span in the parallel structural dynamics.
+
+
+\section{Implementations}
+\label{sec:implementations}
+
+\subsection{Sequential Array Implementation}
+
+Suppose that $A$ is a leaf array  (see figure \ref{fig:new_array_A}). $A$ has a mutable version number $V$, and a reference to $AD$ of type \ArrayData. $AD$ keeps a mutable array of values, which corresponds to the values in $A$. $AD$ has a mutable version number, which is the same as $A'$s ($V$) to indicate that $A$ is a leaf array. For each element of the array in $AD$, keep a log of values that used to be at that index. The logs are initially empty.
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.3]{new_array_A}
+\nocaptionrule \caption{New functional array filled with 0s}
+\label{fig:new_array_A}
+\end{figure}
+
+\get{} on leaf arrays: to get the $i^{\text{th}}$ element in $A$, simply access array[i] in $AD$.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.3]{set_A_return_B}
+\nocaptionrule \caption{$B = \tset(A, 3, 5)$ changes the array in $AD$ and adds a log entry.}
+\label{fig:set_A_return_B}
+\end{figure}
+
+\set{} on leaf arrays: Suppose that $A[i]$ is $v_{old}$ and we want to do $B = \tset{}(A, i, v_{new})$ (see figure \ref{fig:set_A_return_B}). Add an entry $(V, v_{old})$ to the log at index $i$, expressing that $A[i]$ was $v_{old}$ at version $V$. Increment the version of $AD$ to $V+1$. Set $array[i]$ in $AD$ to $v_{new}$. Create a new functional array $B$, with version $V+1$, which points to $AD$. Notice that both $A$ and $B$ point to $AD$. However, the version of $A$ is $V$ and the version of $AD$ is $V+1$, which indicates that $A$ is an interior array. The version of $B$ is $V+1$ which indicates that $B$ is a leaf array.
+
+\get{} on interior array: Suppose we do $\tget{}(A, i)$ where $A$ is an interior array and has version $V$. We binary search the log at index $i$ to find what value was stored in the array at version $V$.
+\begin{figure}[!ht]
+\centering
+\includegraphics[scale=0.3]{set_old_array}
+\nocaptionrule \caption{$D = \tset(A, 1, 9)$ copies $AD$ because $A$ is OLD}
+\label{fig:set_old_array}
+\end{figure}
+
+\set{} on interior arrays: Suppose we do $D = \tset{}(A, i,v)$ where $A$ is an interior array (see figure \ref{fig:set_old_array}). Create $AD'$ of type \ArrayData (with a reference to a new mutable array). Copy the values from the array in $AD$ to the array in $AD'$, and then set $array[i]$ to $v$ in $AD'$.
+
+Implementation details: The logs are stored in a doubling array which doubles in size when full. This guarantees amortized $O(1)$ insertion of a log entry, and allows us to binary search with $O(\log{m})$ work, where $m$ is the number of log entries.
+
+Suppose that the size of the array is $n$. Every $n$ times $AD$ of type ArrayData is modified, we create $AD'$ of type ArrayData, and copy the values over from $AD$ to $AD'$. This ensures that $m \leq n$ i.e. we don't have too many log entries in $AD$. The copying has amortized cost $O(1)$.
+
+It follows that in the RAM model the work of \set{} and \get{} is $O(1)$ for a leaf array. \get{} in an interior array involves a binary search and has work $O(\log{n})$. \get{} in an interior array involves copying the array, and has work $O(n)$.
+
+\subsection{Concurrency Model}
+
+Our target language is an SML-like functional language with support for fork-join parallelism, mutable references, mutable arrays, and an atomic compare and swap function \func{cmpswap}. \func{cmpswap}(addr : int ref, oldval : int, newval : int) : bool is a single atomic operation. It compares the value at addr to oldval, and if and only if they are the same sets the value at addr to newval and returns true.
+
+We assume a $p$-processor parallel machine model. For our proofs of correctness, we assume a sequentially consistent memory model. When analyzing costs, we assume that all processors are synchronized with respect to a global clock. At each time step, as many processors as possible execute a single pending instruction.
+
+We give SML-like pseudocode for our concurrent array implementation.
+
+\subsection{PushArray Implementation}
+
+We use an auxiliary data structure, pusharrays, to store log entries. Conceptually, Pusharrays are lists that support 3 functions. Suppose we have a PushArray $A$. $\tpush{}(A,e)$ inserts entry $e$, $\tsize{}(A)$ returns the number of entries inserted, $\tget(A,i)$ returns the $i^{\text{th}}$ entry inserted. Note that \get{} is only defined between indices 0 and $\tsize{}(A)-1$. All operations are amortized $O(1)$.
+
+PushArrays can be used semi-concurrently. At most one thread can execute instructions in \push{} at any time, but multiple threads can call \size{} and \get{}. The type of a PushArray is (capacity : int, size : int, data : 'a array) ref. The data array stores the entries inserted into the PushArray. If the PushArray does not have the capacity for more insertions, it doubles the size of its data array. Pseudocode for \push{} is given below.
+
+\begin{lstlisting}[language=ML]
+type capacity = int
+type size = int
+type 'a pushArray = (capacity ** size ** 'a array) ref
+
+val push : 'a pushArray ** 'a -> unit
+fun push$(A \mbox{ as } \mbox{ref}(m,n,D), v)$ =
+  if $(m = n)$ then 
+    let val $m' = 2 \times m$
+       val $D'$ = newArray$(m')$
+    in copyArray$(D,D')$;
+       update$(D',n,v)$;
+       A := $(m',n+1,D')$
+    end
+  else 
+    update$(D, n, v)$;
+    A := $(m, n+1, D)$
+\end{lstlisting}
+
+\size{} simply returns the size attribute of the PushArray, and \get{}$(A,i)$ returns the $i^{\text{th}}$ index in the PushArray's data array.
+
+\begin{theorem}
+Given that different calls to \push{} (on the same PushArray) do not overlap, PushArrays are linearizable.
+\end{theorem}
+
+\begin{proof}
+We give a proof sketch. The linearization point of \push{} is when we increment the size of the PushArray, and the linearization point of the other functions is their single instruction. In \push{}, creating a new data array when the old data array is full does not interfere with accessing the data array because we copy values to newdata before the PushArray references newdata. The effects of adding $e$ are only observable after we increment $size$, since, by the specification of PushArrays, the result of calling \get{} on an index $\geq$ \size{} is not defined. Note that the ordering of instructions is important, the size cannot be updated before modifying the array or before replacing the data array with newdata or there could be a race condition.
+\end{proof}
+
+\subsection{Functional Array Implementation}
+
+The type of our functional arrays is (version : int, data: 'a arraydata). The type of arraydata is (version : int ref, vals : 'a array, logs : ('a pusharray) array).
+
+We give pseudocode for \get{} and \set{}. \set{} does a compare and swap on the arraydata's version so that only one thread can modify an arraydata at any point in time. If the compare and swap is successful, a log entry is inserted and the vals array is mutated. Otherwise, the values in the array are copied over to produce a new arraydata. The new arraydata will have empty logs. Note that the values are not directly copied into the new arraydata from the vals array, we need to call \get{} at each index of the array when copying the values over. 
+
+The ordering of the instructions in \set{} is critical. If the vals array is modified before the log entry is inserted then a \get{} evaluated between the 2 instructions could evaluate to the wrong value.
+
+\begin{lstlisting}[language=ML,escapechar=|]
+type version = int
+type 'a logs = ('a pushArray) array
+type 'a data = version ref ** 'a array ** 'a logs
+type 'a farray = version ** 'a data
+
+val set : 'a farray ** int ** 'a -> 'a farray
+fun set$((v,(v_r, A, L)),i,v)$ = 
+  if not(cmpswap$(v_r, v, (v+1))$)|\label{line:set-cmpswap}| orelse
+     (!$v_r \bmod \mbox{length}(A) = 0$) then
+    let val $(v_r', A', L')$ = copyad$(v_r, A, L)$
+    in update$(A', i, v)$; $(v, (v_r', A', L')$ 
+    end
+  else
+    push$(\mbox{sub}(L,i),v,\mbox{get}(A,i))$; |\label{line:start-cmpswap}|
+    update$(A, i, v)$;
+    $(v+1, (v_r, A, L))$ |\label{line:end-cmpswap}|
+\end{lstlisting}
+
+\get{}(A,i) first examines the value at the $i^{\text{th}}$ index of the vals array. If the array's version and corresponding arraydata's version match (meaning that the array is a leaf array), then \get{} evaluates to vals[i]. If the log at index $i$ is empty or all versions in the log at index $i$ are less than the array version, then \get{} evaluates to val[i]. Otherwise, \get{} binary searches for the value corresponding to the least version $\geq$ the array's version.
+
+As in \set{}, the ordering of the instructions in \get{} is important. In particular, vals[i] must be loaded before the versions are compared or the logs are examined. If the versions are compared before vals[i] is loaded and a \set{} is evaluated between the 2 instructions, the \set{} might modify vals[i] and cause the \get{} to evaluate to the wrong value.
+
+\begin{lstlisting}[language=ML,escapechar=|]
+val getA : 'a farray ** i -> 'a
+fun getA$((v, (v_r, A, L)),i)$ =
+let val guess = sub$(A,i)$
+   val ref$(m,n,l)$ = sub$(L, i)$
+in if $(v = ~!v_r)$ orelse $(size(L) \% n = 0)$ then guess |\label{line:get-version-check}|
+   else
+      let val $(v', \_)$ = get$(l, n-1)$
+      in if $v' < v$ then guess
+        else leastversiongeq$(l,v,n)$
+      end
+\end{lstlisting}
+
+\subsection{Correctness}
+
+Formally proving the correctness of our array implementation is a huge endeavor that is beyond the scope of this paper. We prove a representational invariant, which, assuming that a Reynolds like parametricity theorem holds for our setting, would imply the correctness of our implementation. For simplicity, we assume that all arrays are arrays of integers.
+
+\begin{definition}
+We define an asymmetric relation $\sim$ between arrays in the implementation and the source language. Consider an array $A$ in the source language and an array $(v, (vr, vals, logs))$ in the target language. We say that $A \sim (v, (vr, vals, logs))$ if the following holds. Consider arbitrary index $i$ and the value $A[i]$. If there exists some version in $logs[i]$ which is $\geq v$ then there exists a log entry $(v', A[i])$ where $v'$ is the smallest version in $logs[i]$ with $v' \geq v$. If no version in $logs[i]$ is $\geq v$, then $vals[i]$ is $A[i]$.
+\end{definition}
+
+We prove theorems that show the representational invariance between arrays in the source and target language. We first state a few lemmas without proof.
+
+\begin{lemma}
+For a given arraydata, calls to the region of code in \set{} between lines \ref{line:start-cmpswap} and \ref{line:end-cmpswap} (the part of the code executed if the compare and swap is successful) cannot overlap.
+\end{lemma}
+
+\begin{lemma}
+The versions in a log are in strictly increasing order.
+\end{lemma}
+
+\begin{lemma}
+All versions in log entries are strictly less than the version of the arraydata.
+\end{lemma}
+
+\begin{definition}
+Call a \set{} where the compare and swap succeeded a leaf \set{} and call a \set{} where the compare and swap failed an interior \set{}.
+\end{definition}
+
+\begin{theorem}
+Suppose that $C \sim (v, (vr, vals, logs))$ where $C$ is some array in the source and $(v, (vr, vals, logs)) = D$ is some array in the implementation. Every instruction in \set{}$(B,i,v)$ maintains $C \sim D$.
+\end{theorem}
+
+\begin{proof}
+Consider arbitrary array $C$ in the source and $D$ in the target with $C \sim D$. Suppose that $B = (v', data')$ If $data' \neq (vr, vals, logs)$, then $C \sim D$ trivially. So WLOG suppose that $data' = (vr, vals, logs)$. Note that we only need to consider index $i$ of $C$ and $D$.
+
+If \set{}$(B,i,v)$ is an interior \set{} then $C \sim D$ trivially since interior \set{}s do not mutate state. So WLOG suppose that \set{}$(B,i,v)$ is a leaf \set{}.
+ 
+Since calls to leaf \set{}s on $(vr, vals, logs)$ do not overlap, calls to the PushArrays in $logs$ do not overlap. Since PushArrays are linearizable, we can treat the pushing of a log entry as an atomic operation. Case on the version $v$ of $D$. 
+\begin{enumerate}
+\item There was no version $v' \geq v$ in $logs[i]$. Then since $C \sim D$, $vals[i] = C[i]$. When evaluating \set{}$(B, i, v)$, we inserted a log entry $(V', C[i])$ with $V' \geq v$. Further, $V'$ is the only version in $logs[i]$ with $v' \geq v$ and is therefore the minimal. So after the log entry is pushed, $C \sim D$.
+\item There was a version $v' \geq v$ in $logs[i]$. Then there exists a log entry $(v', C[i])$ where $v'$ is the smallest version in $logs[i]$ with $v' \geq v$. Evaluating the \set{} inserts a log entry with version $\geq v'$, so $v'$ is still the smallest version in $logs[i]$ with $v' \geq v$. Therefore after the log entry is pushed, $C \sim D$.
+\end{enumerate}
+
+Updating $vals[i]$ keeps $C \sim D$ because $logs[i]$ has a version at least as large as $v$, the version of $D$. So from the definition of $\sim$ on arrays, only the log entry matters and the value stored in $vals[i]$ does not matter.
+
+\end{proof}
+
+\begin{theorem}
+\label{thm:get_thm}
+If $A \sim (v, (vr, vals, logs))$ at every instruction, and we denote $(v, (vr, vals, logs))$ by $B$, then \get{}$(B,i)$ in the target evaluates to $A[i]$.
+\end{theorem}
+
+\begin{proof}
+If $v = !vr$ when the comparison is made, then $v = !vr$ when we set $guess = vals[i]$. Since the versions in the logs are less than $!vr$, the versions in the logs are less than $v$. By definition of $A \sim B$, $guess = A[i]$. In this case, \get{}$(B,i)$ evaluates to $guess = A[i]$ as desired.
+
+Using a similar line of reasoning, if $logs[i]$ is empty or the last version in the logs is less than $v$, $guess = A[i]$ and \get{}$(B,i)$ in the target evaluates to $guess = A[i]$ as desired. 
+
+Otherwise, we know that the log versions in $logs[i]$ are increasing, and there is a log version $\geq v$. So from the definition of $A \sim B$ we can binary search for the value of $A[i]$.
+
+\end{proof}
+
+\begin{theorem}
+Suppose that $A \sim (v, (vr, vals, logs))$ at every instruction, and denote $(v, (vr, vals, logs))$ by $B$. Suppose that \set{}$(B,i,v)$ evaluates to $B'$. Then $A[i \mapsto v] \sim B'$.
+\end{theorem}
+
+\begin{proof}
+We case on whether the \set{} is a leaf \set{} or interior \set{}.
+
+Case leaf \set{}: Again, we note that calls to leaf \set{}s cannot overlap, and only leaf \set{}s mutate state. All versions in $logs$ are less than $v$, so since $A \sim B$ before the \set{} was evaluated, $A[j] = vals[j]$ for all $j$. The implementation of \set{} modifies $vals[i]$ to $v$ but keeps $vals[j]$ the same for all $j \neq i$. It follows that after the \set{} finishes evaluating, $A[i \mapsto v][j] = vals[j]$ for all $j$. Since the logs are empty, $A[i \mapsto v] \sim B'$.
+
+Case interior \set{}: Since $B'$ references a newly created arraydata which is populated via calls to \get{} on the array $B$, $A[i \mapsto v] \equiv B'$ follows from theorem \ref{thm:get_thm}
+\end{proof}
+
+\subsection{Interleaved Cost Bounds}
+
+We want to show that work done in the interleaved structural dynamics is an upper bound for the work done in the implementation. We first show a linearizability-type result.
+
+Consider the execution $E$ of an arbitrary program. We assume a sequentially consistent model of computation. Consider a sequential execution $S$ of instructions in $E$ that produces the same result as $E$. 
+
+Consider any \get{} in the sequential execution $S$. From the previous subsection, the result that the \get{} evaluates to does not depend on how the instructions in the \get{} are interleaved. Consider line \ref{line:get-version-check} in \get{} where the version of the array is compared with its arraydata. If the versions match then \get{} involves a constant amount of work. Otherwise, in the worst case \get{} involves a binary search on $n$ elements, where $n$ is the size of the array. This takes work proportional to $\log{n}$.
+
+So the execution $S$ is upper bounded (in cost) by an execution where the entire \get{} is evaluated atomically at the instruction where the versions of the array and arraydata are compared, where the \get{} has constant work if the version check succeeds and $\log{n}$ work if the check fails.
+
+Similarly, consider any \set{} in the sequential execution $S$. From the previous subsection, the result that the \set{} evaluates to does not depend on how the instructions in the \set{} are interleaved. Consider line \ref{line:set-cmpswap} in \set{} which involves a compare and swap on the arraydata's version. If the compare and swap is successful then \set{} involves a constant amount of work. Otherwise, in the worst case \set{} involves copying over $n$ elements, where $n$ is the size of the array. This takes work proportional to $n$.
+
+So the execution $S$ is upper bounded (in cost) by an execution where the entire \set{} is evaluated atomically at the compare and swap instruction, where the \set{} has constant work if the compare and swap succeeds and $n$ work if the compare and swap fails.
+
+We can trivially assume that \new{} is evaluated atomically since none of the effects of \new{} are observable until it finishes evaluating, and \new{} always takes time proportional to the size of the array being created.
+
+Now, we need to show a representational invariance between arrays in the source language and the target language (where we assume that all array operations in the target language take place atomically as described above). We use the representational invariance in the previous section augmented with versions and costs. If $A$ is an array in the source language and $\delta$ is the store, then $(l, A) \equiv (v, (vr, vals, logs))$ if the condition described in the previous subsection holds and either $v = !vr$ and $\delta[l] = (+,\_)$ or $v \neq !vr$ and $\delta[l] = (-, \_)$.
+
+Using arguments similar to the previous subsection's, we can show that the representational invariant is maintained by \get{} and \set{}. Furthermore, assuming that the representation invariant holds, the costs of \get{} and \set{} in the target are upper bounded by the costs of \get{} and \set{} in the source.
+
+\subsection{Parallel Cost Bounds}
+
+Next, we consider the case where we have an unbounded number of processors. In the worst case, \get{} involves a binary search on $n$ elements, where $n$ is the size of the array. This takes $\log{n}$ on a single processor and therefore $\log{n}$ time on a machine with an unbounded number of processors. In the worst cae, \set{} involves copying $n$ array elements and $n$ log entries where $n$ is the size of the array. From previous work, the copying can be done in $\log{n}$ time where $n$ is the size of the array, even after accounting for the costs of scheduling threads to copy in parallel. 
+
+It takes $n$ work to create an array of size $n$ using \new{}, so the work $W \geq n$ for all array sizes $n$. So the costs of \get{} and \set{} are upper bounded by $\log{W}$.
+
+The implementation of \get{} and \set{} are wait-free. In particular, calls to \get{} and \set{} do not wait on other calls to perform an operation, for example by looping on a compare and swap. Therefore, assuming that the parallel machine is efficient and schedules instructions concurrently when possible, instructions in \get{} and \set{} can happen concurrently. Therefore the span calculated by the parallel structural dynamics, multiplied by $\log{W}$ is an upper bound for the work done on a machine with an unbounded number of processors.
+
+It follows that the array implementation satisfies the interface of versioned data structures specified by the interleaved and parallel structural dynamics. As such, from the theorems in the paper, we can use the evaluational dynamics to compute the work $W$ and span $S$ for expressions involving arrays. Then we get that the cost of evaluating the expression on a machine with $p$ processors is proportional to $\frac{W}{p} + S\log{W}$
+
+\subsection{Other Implementations}
+
+We briefly discuss implementations of functional hash tables and functional disjoint sets, ommitting proofs.
+
+We can implement functional hash tables with separate singly linked list chaining to handle collisions that support \set{}$(H, key, val)$ and \get{}$(H,key)$. We use a functional array $A$ of lists to represent a functional hash table, where key-value pairs are stored in the list at the index that the hash function maps the key to. 
+
+To insert a new key-value pair into the hash table, we get the list at the corresponding hashed index $i$, add the key-value pair to the list to get a new list $l$, and then return \set{}$(A, i, l)$. We expand the size of the hash table when there are $n/2$ items in the hash table, where $n$ is the current size of the array. The expansion is amortized constant time (regardless of how the functional hash table is used). \get{} simply involves getting the list at the hashed index and searching the list for the appropriate (key, value) pair. 
+
+Assuming a uniformly random (or close to uniformly random) distribution of keys, and a good hash function, this implementation will have average-case $O(1)$ accesses and insertions for leaf hash tables, and $O(\log{n})$ time access and $O(n)$ time insertions for interior hash tables.
+

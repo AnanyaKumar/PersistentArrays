@@ -1,0 +1,38 @@
+Thanks to all the reviewers for detailed and useful feedback.
+
+Review A:
+
+- Thanks for your detailed comments, we will fix the issues you identified.
+
+Review B:
+
+- Thanks for the feedback on our presentation. We will make the workings of the data structure more clear.
+
+- We will work on the clarity of our correctness sketch. Our argument is rely-guarantee, but we cite Birkedal et al for its extension to a higher order language using logical relations, which we depend on.
+
+- Haskell's Diffarrays are an implementation of Bloss' idea of "trailers" (from "Update Analysis and the Efficient Implementation of Aggregates”). We cite the improved version by Chuang, but will add the earlier cite by Bloss and point out that Diffarrays use it. Diffarrays differ from ours in that: (1) reading in the past takes O(m) time, where m is the number of updates made (i.e. it is not even a function of the size), (2) it does not support concurrency, (3) there is no cost semantics.
+
+Review C:
+
+- Thanks for your detailed comments, we will fix all identified issues and ambiguities.
+
+- O(n) vs O(n^2) time question: For every n operations on a leaf sequence, we only make a copy of the values in the leaf sequence. We don’t copy interior sequences, or the change logs stored at the leaf sequence. The aim is to keep the size of the change logs small - the newly copied sequence will have empty change logs. We will make this logic more clear in our paper.
+
+- Exploring functional hashtables is a great idea.
+
+Review D:
+
+- Your observations are all valid. The sequential version of our data structure is conceptually simple, and the sequential analysis is easy, and not of significant interest from an algorithmic point of view. The main goal of our paper is to give a concurrent implementation, and analyze its complexity formally in a cost semantics. We present a way to do this without having to consider all possible interleavings of threads, and the analysis can generalize to other structures. From the data structures point of view, we are also interested in a wait-free concurrent implementation. We will identify our main contributions more clearly.
+
+- Thanks for your detailed feedback on our experiments. Indeed, it is easy to construct cases where our data structure performs poorly (e.g. repeatedly setting interior nodes). Our aim was to give preliminary results that suggest our data structure works well if most operations are on leaf nodes, even if the data structure is used concurrently (the efficiency of leaf updates is not obvious due to potential overheads of the implementation). As you point out, more systematic testing should be done in future work.
+
+Review E:
+
+- Thanks for the detailed review, the full code (in SML and Java) is available at https://github.com/AnanyaKumar/PersistentArrays
+
+- Indeed amortization would be a problem if applied to the span (depth), but this does not pose a problem for us since the copy can be done in parallel so the span of the copy is O(log(n)) in the worst case, not amortized (section 6.6). The amortization is only with respect to the work, which is valid since work adds. Given the work and depth, we rely on prior work to compute the costs for a machine with p processors (theorem 3.1). This analysis works even if the work is amortized.
+
+- We will clarify the ambiguity about size vs capacity in Pusharray.new
+
+- We will clarify that our algorithm only improves on the READ accesses to old versions (compared to Chuang’s array)
+

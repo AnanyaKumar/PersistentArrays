@@ -1,0 +1,233 @@
+\section{Cost Proofs}
+\label{sec:costproof}
+
+We show that the work computed by the evaluational dynamics is a tight upper bound for the work in the interleaved structural dynamics. Proofs for the span bounds are omitted because they are standard (the parallel structural dynamics is deterministic).
+
+\begin{definition}
+Consider a transition sequence $T$. We say that $S_i, e_i \to S_{i+1}, e_{i+1}, w_{i+1}$ is a \get{} on $l$ if the step involves evaluating the \get{} function on structure $(l, V)$. We say it is a \emph{cheap \get{}} on $l$ if $w_{i+1} = g_l(l)$. The number of cheap \get{}s on $l$ in $T$ is denoted by $SC_l(T)$.
+\end{definition}
+
+\begin{definition}
+Unlike the store in the evaluational dynamics, the store in the structural dynamics only stores whether each structure is $+$ (leaf) or $-$ (interior). $sign(\delta)$ takes a store that maps $l \mapsto (s,c)$ and returns a store which maps $l \mapsto s$.
+\end{definition}
+
+\begin{definition}
+Suppose that $\delta, e \Downarrow \delta', e', w', s'$. We define the number of cheap \get{}s in going from $\delta$ to $\delta'$ in the evaluational dynamics as follows. Suppose $l \mapsto (s', c') \in \delta'$. If $l \mapsto (s,c) \in \delta$ then $EC_l(\delta, \delta') = c' - c$ and if $l \not\in L(\delta)$ then $EC_l(\delta, \delta') = c'$. If $l \not\in L(\delta')$ then $EC_l(\delta, \delta') = 0$.
+\end{definition}
+
+\begin{definition}
+A \emph{relabeling} of $L_1$ is a bijective function $R$ from label sets $L_1 \to L_2$. $R$ can be used to relabel stores and expressions. $R(\delta) = \{ R(l) \mapsto e \; | \; l \mapsto e \in \delta \wedge l \in L_1  \} \cup \{ l \mapsto e \; | \; l \mapsto e \in \delta \wedge l \not\in L_1  \}$. In other words, $R$ relabels some of the labels in $\delta$. Similarly, $R(e)$ returns an expression $e'$ where each occurrence of a label $l \in L_1$ in $e$ is substituted by $R(l)$.
+\end{definition}
+
+\begin{lemma}
+\label{relabeling_lemma}
+Suppose that there exists a derivation of length $m$ that $\delta, e \Downarrow \delta', e', w, s$. Let $R$ be an arbitrary labeling. Then there exists a derivation of length $m$ that $R(\delta), R(e) \Downarrow R(\delta'), R(e'), w, s$.
+\end{lemma}
+
+\begin{proof}
+By applying the relabeling to each step of the derivation, and noting that all rules in the evaluational dynamics hold under relabelings.
+\end{proof}
+
+\begin{lemma}
+\label{stateless_lemma}
+If $S, e \to S', e', w$ and $U$ is a store s.t. for all $l \in e$, $l \in U$, then there exists $U', w'$ s.t. $U, e \to U', e', w'$
+\end{lemma}
+
+\begin{proof}
+By casing on each rule in the structural dynamics, and noting that transitions of expressions never depend on the values in the store (the dynamics are purely functional).
+\end{proof}
+
+\begin{theorem}
+\label{main_work_theorem}
+Suppose that 
+$$\delta, e_0 \Downarrow \delta_E, e_E, w_E, s_E$$
+
+and consider arbitrary maximal transition sequence T taking 
+$$S_0 = sign(\delta), e_0 \to^n S_n, e_n$$
+å
+The following hold:
+\begin{enumerate}
+\item For some relabeling $R$ of $L(\delta_E) \setminus L(\delta)$, $S_n = sign(R(\delta_E))$ and $e_n = R(e_E)$.
+\item For all $l \in \delta_E$, $EC_l(\delta, \delta_E) \leq SC_{R(l)}(T)$.
+\item The sum of work and cheap \get{}s is conserved: \begin{align*}
+w_E + &\sum_{l \in L(\delta_E)} EC_l(\delta, \delta_E) (g_i(l)-g_l(l)) =\\
+ &W(T) + \sum_{l \in L(\delta_E)} SC_{R(l)}(T) (g_i(R(l)) - g_l(R(l)))
+ \end{align*}
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+By induction on the length of the shortest derivation in the evaluation dynamics. We prove the theorem for 2 of the rules in the evaluation dynamics: get-leaf and fork-join. The other cases follow from a similar line of reasoning.
+\\
+
+\noindent \textbf{Case get-leaf}: Suppose $e_0 = \tget{}(e_L, e_R)$ and
+$$\delta, e_L \Downarrow \delta_L, e_L', w_L$$
+$$\delta_L, e_R \Downarrow \delta_R, e_R', w_R$$
+$$\delta_R, \tget{}(e_L', e_R') \Downarrow \delta_E, e_E, g_l(l')$$
+where $e_L' = (l', V)$ for some $V$, which gives us
+$$\delta, \tget{}(e_L, e_R) \Downarrow \delta_E, e_E, w_E$$
+with $w_E = w_L + w_R + g_l(l')$.
+
+Note that the structural dynamics first step the left argument to \get{}, then the right argument, and finally evaluate the \get{}. So there exists $m$ such that $T_{0,m}$ involves stepping the left argument, $T_{m,n-1}$ involves stepping the right argument, and $T_{n-1,n}$ involves evaluating the \get{}.
+
+\textbf{Part 1}: Suppose that in $T_{0,m}$, for $0 \leq i \leq m$, $e_i = get(e_{L,i}, e_R)$. Consider a new projected transition sequence $T_{0,m}'$ with states $[(S_0, e_{L,0}), ..., (S_m, e_{L,m})]$ and costs the same as $T_{0,m}$: $[w_1, ..., w_m]$. It is easy to verify that $T_{0,m}'$ is a valid transition sequence starting at $(S_0, e_{L,0})$ and is maximal. 
+
+$S_0 = sign(\delta)$ and $e_{L,0} = e_L$ so we can apply the IH to $T_{0,m}'$. For some relabeling $R$ of labels in $L(\delta_L) / \delta$, $s_m = sign(R(\delta_L))$ and $e_{L,m} = R(e_L')$ $\Rightarrow$ $e_m' = (e_{L,m}, e_R) = (R(e_L'), e_R)$. WLOG suppose that $\delta_L$ was labeled such that the above hold (we can do this because of lemma \ref{relabeling_lemma}). Note that in subsequent parts of the proof, we omit creating the projected transition sequence and apply the IH directly to $T_{0,m}$ when needed.
+
+Using similar logic on $T_{m,n-1}$ we get that for some relabeling of $\delta_R / \delta_L$, applying that relabeling to $\delta_R$ and $(e_L', e_R')$ gives us $e_{n-1} = (e_L', e_R')$ and $S_{n-1} = sign(\delta_R)$. WLOG suppose that $\delta_R$ was labeled so that the above holds.
+
+By combining the relabelings of $\delta_L / \delta$ and $\delta_R / \delta_L$ and applying that to $(e_L', e_R')$ and $\delta_R$, we get that $e_{n-1} = get(e_L', e_R')$ and $S_{n-1} = sign(\delta_R)$. Note that get does not change the sign of any label in the store in either the structural or the evaluation dynamics, so $sign(\delta_E) = sign(\delta_R) = S_{n-1} = S_n$. Further, the structural and evaluational dynamics apply get in the same way, so $e_n = e_E$. Therefore the first part of this theorem holds. WLOG suppose that the stores and expressions were relabeled s.t. the first part holds.
+
+\textbf{Part 2}: From lemma \ref{relabeling_lemma}, the length of the shortest derivation for the relabeled evaluational dynamics does not change, so we can apply the inductive hypothesis even after the relabeling. Applying the IH to $T_{0,m}$, for all $l \in \delta_L$, $EC_l(\delta, \delta_L) \leq SC_l(T_{0,m}') = SC_l(T_{0,m})$. If $l \in \delta_R$ but $l \not\in \delta_L$ then $EC_l(\delta, \delta_L) = SC_l(T_{0,m}) = 0$ (intuitively the label did not exist and so did not have any cheap gets), so in particular, for all $l \in \delta_R$, $EC_l(\delta, \delta_L) \leq SC_l(T_{0,m})$. Applying the IH to $T_{m,n-1}$ we get that for all $l \in \delta_R$, $EC_l(\delta_L, \delta_R) \leq SC(T_{m,n-1})$.
+
+We note that $EC$ and $SC$ are additive, that is,
+$$EC_l(\delta, \delta_R) = EC_l(\delta, \delta_L) + EC_l(\delta_L, \delta_R)$$
+$$SC_l(T_{0,n-1}) = SC_l(T_{0,m}) + SC_l(T_{m,n-1})$$
+This implies that for all $l \in \delta_R$, $EC_l(\delta, \delta_R) \leq SC_l(T_{0,n-1})$. 
+
+Now, let $e_L' = (l',V)$ with $l' \in \delta_R$. Then, $EC_{l'}(\delta, \delta_E) = EC_{l'}(\delta, \delta_R) + 1$ and $SC_{l'}(T) = SC_{l'}(T_{0,n-1}) + 1$, so $EC_{l'}(\delta, \delta_E) \leq SC_{l'}(T)$. If $l \neq l'$ then $EC_{l}(\delta, \delta_E) = EC_{l}(\delta, \delta_R)$ and $SC_{l}(T) = SC_{l}(T_{0,n-1})$, so $EC_{l}(\delta, \delta_E) \leq SC_{l}(T)$. So the second part of the theorem holds.
+
+\textbf{Part 3}: The third part of the theorem follows by similarly applying the IH on $T_{0,m}$ and $T_{m,n-1}$, and noting that $W(T) = W(T_{0,m}) + W(T_{m,n-1}) + g_l(l')$.
+\\
+
+\noindent \textbf{Case fork-join}: Suppose $e_0 = (e_L || e_R)$ and
+$$\delta, e_L \Downarrow \delta_L, v_L, w_L$$
+$$\delta, e_R \Downarrow \delta_R, v_R, w_R$$
+which gives us
+$$\delta, (e_L || e_R) \Downarrow \delta', (v_1 || v_2), w_L + w_R + w'$$
+with $w'$ and $\delta'$ defined in terms of \func{extrawork} and \func{combine} as given in the evaluational dynamics.
+
+In T, for all $0 \leq i \leq n$ let $e_i = (e^L_i || e^R_i)$. Let $I_L$ be the sequence of all $0 \leq i \leq n-1$ where transitioning from $e_i$ to $e_{i+1}$ involved stepping the left argument. Let $m$ be the length of $I_L$. Similarly define $I_R$ for the right argument, and let $k$ be the length of $I_R$.
+
+Let $A$ be the sequence of $e^L$s corresponding the indices in $I_L$, and add $e^L_n$ at the end of $A$. Similarly, let $B$ be the sequence of $e^R$s corresponding the indices in $I_R$, adding $e^R_n$ at the end.
+
+Let $S^L_0 = S_0 = sign(\delta)$. By inductively applying lemma \ref{stateless_lemma}, there exists $S^L_1, ... S^L_m$ s.t. $T_L = [(S^L_0, A_0), ..., (S^L_m, A_m)]$ is a transition sequence. $T_L$ is maximal, because if $A_m$ in $T_L$ can take a step then $e^L_n$ in $T$ can take the corresponding step. Similarly, let  $S^R_0 = S_0 = sign(\delta)$. Then, there exists $S^R_1, ... S^R_k$ s.t. $T_R = [(S^R_0, B_0), ..., (S^R_k, B_k)]$ is a maximal transition sequence.
+
+Applying the IH on $T_L$, we get a relabeling $R_L$ on $L(\delta_L) \setminus L(\delta)$ s.t. $R_L(v_L) = A_m = e^L_n$ and $sign(R_L(\delta_L)) = S^L_m$. Similarly, we get a relabeling $R_R$ on $L(\delta_R) \setminus L(\delta)$ s.t. $R_R(v_R) = B_k = e^R_n$ and $sign(R_R(\delta_R)) = S^R_k$. 
+
+By inducting on the product $mk$, we can show that the new labels produced in $T_L$ and $T_R$ do not overlap, that is: $(L(S^L_m) \setminus L(S_0)) \cap (L(S^R_k) \setminus L(S_0)) = \emptyset$. Compose the relabelings to get relabeling R.
+
+Applying lemma $\ref{relabeling_lemma}$ and the fork join rule, we get,
+$$\delta, R(e_L) \Downarrow R(\delta_L), R(v_L), w_L$$
+$$\delta, R(e_R) \Downarrow R(\delta_R), R(v_R), w_R$$
+which gives us
+$$\delta, R((e_L || e_R)) \Downarrow R(\delta'), R((v_1 || v_2)), w_L + w_R + w'$$
+
+with $R((v_1||v_2)) = (R(v_1) || R(v_2)) = (e_n^L || e_n^R)$. To reduce clutter, WLOG suppose that the stores and expressions in the evaluational dynamics were labeled as such. By lemma \ref{relabeling_lemma} we can apply the IH on the relabeled evaluational dynamics since the length of the shortest derivation is invariant under relabelings.
+
+\begin{lemma}
+\label{label_projection_lemma}
+$l \in S_n$ if and only if either $l \in S^L_m$ or $l \in S^R_k$
+\end{lemma}
+
+\begin{proof}
+If $l \in S_0$ the claim holds trivially. Otherwise,
+
+$(\Rightarrow)$ By considering the step in $T$ that first introduced $l$, and examining the corresponding step in either $T_L$ or $T_R$.
+
+$(\Leftarrow)$ By considering the step in $T_L$ (or $T_R$) that first introduced $l$ and examining the corresponding step in $T$.
+\end{proof}
+
+\begin{lemma}
+\label{sign_projection_lemma}
+$S_n[l] = -$ if and only if either $l \in S^L_m$ and $S^L_m[l] = -$ or $l \in S^R_k$ and $S^R_k[l] = -$
+\end{lemma}
+
+\begin{proof}
+Similar to lemma \ref{label_projection_lemma}.
+\end{proof}
+
+\textbf{Part 1}: We claim that the set of labels in $\delta'$ and $S_n$ are the same. From the evaluational dynamics, $L(\delta') = L(\delta_L) \cup L(\delta_R)$. Since $sign(\delta_L) = S^L_m$ and $sign(\delta_R) = S^R_k$, $L(\delta_L) = L(S^L_m)$ and $L(\delta_R) = L(S^R_k)$. From lemma $\ref{label_projection_lemma}$, $L(S_n) = L(S^L_m) \cup L(S^R_k) = L(\delta')$ which proves the claim. 
+
+To show that $sign(\delta') = S_n$ we case on arbitrary $l \in L(\delta')$ and show that $sign(\delta')[l] = S_n[l]$:
+
+\textbf{Case $l \in L(\delta)$}: 
+
+If $\delta[l] = (-,\_)$ then $S_0[l] = -$. The evaluational and structural dynamics do not change $-$ to $+$ so $\delta'[l] = (-,\_)$ and $S_n[l] = -$ so $sign(\delta')[l] = S_n[l]$.
+
+Suppose $\delta[l] = (+, \textunderscore)$, in which case $S_0[l] = +$. If $\delta'[l] = (+,\_)$, then from the way combine works, $\delta_L[l] = (+, \_)$ and $\delta_R[l] = (+, \_)$. From the IH $S^L_m[l] = +$ and $S^R_k[l] = +$. From lemma \ref{sign_projection_lemma} $S_n[l] = + = sign(\delta')[l]$. 
+
+On the other hand, if $\delta[l] = (+, \textunderscore)$ (in which case $S_0[l] = +$) but $\delta'[l] = (-,\_)$, then from the way combine works, either $\delta_L[l] = (-,\_)$ or $\delta_R[l] = (-, \_)$. WLOG suppose that $\delta_L[l] = (-,\_)$. From the IH, $S^L_m[l] = -$. From lemma \ref{sign_projection_lemma} $S_n[l] = - = sign(\delta')[l]$.
+
+\textbf{Case $l \in L(\delta_L), l \not\in L(\delta)$}: Then $l \not\in \delta_R$ so $\delta'[l] = \delta_L[l]$. From IH, $sign(\delta_L) = S^L_m$. Since $l \not\in \delta_R$, $l \not\in S^R_k$ so by applying lemma \ref{sign_projection_lemma}, $S^L_m[l] = S_n[l]$, as desired.
+
+The case where $l \in L(\delta_R), l \not\in L(\delta)$ is symmetric.
+
+Finally, we note that $(v_1||v_2) = (e^L_n||e^R_n)$ from the way $v_1,v_2$ were relabeled.
+
+\textbf{Part 2}: 
+
+We case on arbitrary $l \in \delta'$.
+
+\textbf{Case $l \in L(\delta)$}: 
+
+If $\delta[l] = (-,c)$ then $EC_l(\delta, \delta') = 0 = SC_l(T)$.
+
+Else suppose $\delta_L[l] = (+,c_1)$ and $\delta_R[l] = (+,c_2)$. Then $SC_l(T) = SC_l(T_L) + SC_l(T_R) \geq EC_l(\delta, \delta_L) + EC_l(\delta, \delta_R) = EC_l(\delta, \delta')$.
+
+Else suppose $\delta_L[l] = (+,c_1)$ and $\delta_R[l] = (-,c_2)$. We can show that all the cheap \get{}s in $T_R$ are cheap in $T$. So $SC_l(T) \geq SC_l(T_R) \geq EC_l(\delta, \delta_R) = EC_l(\delta, \delta)$.
+
+The case where $\delta_L[l] = (-,c_1)$ and $\delta_R[l] = (+,c_2)$ follows by symmetry.
+
+Finally, if $\delta_L[l] = (-,c_1)$ and $\delta_R[l] = (-,c_2)$, then $SC_l(T) \geq 0 = EC_l(\delta, \delta')$.
+
+\textbf{Case $l \in L(\delta_L), l \not\in L(\delta)$} Then $EC_l(\delta, \delta') = EC_l(\delta, \delta_L)$ since $l \not\in \delta_R$. By IH, $EC_l(\delta, \delta_L) \leq SC_l(S_0, S^L_m)$. Since $l \not\in S^R_k$, $SC_l(S_0, S^L_m) = SC_l(S_0, S_n)$ and so the claim holds.
+
+The case where $l \in L(\delta_R), l \not\in L(\delta)$ is similar.
+
+\textbf{Part 3:} We omit the formal proof of this part because it contains tedious algebraic details but the key ideas are described below.
+
+In the conservation expression, each \get{} on each \farray{} $(l,V)$ in both the evaluational and structural dynamics is charged $g_i(V)$ work (considering the sum from both terms). In particular, note that the formula adds an additional $g_i(V)-g_l(V)$ cost for cheap \get{}s. Since the number of \get{}s is the same, the total cost of \get{}s is the same in both dynamics.
+
+The number of \set{}s that are charged $s_i(V)$ is the same for both the evaluational and structural dynamics. This can be shown by casing on the signs of the \farray{} on both sides of the fork. If and only if \set{} was called on a \farray{} on both sides of the fork, one of the \set{}s will cost $s_i(V)$. Since the number of \set{}s is the same, the total cost of \set{}s is the same in both dynamics.
+\end{proof}
+
+\begin{theorem}
+(Work Bound) Given the conditions in theorem \ref{main_work_theorem}, $w_E \geq W(T)$
+\end{theorem}
+
+\begin{proof}
+We assume that $\delta_E$ has been relabeled as described in part 1 of theorem \ref{main_work_theorem}. For all $l \in \delta_E$, $EC_l(\delta, \delta_E) \leq SC_l(T)$. This implies that $\displaystyle \sum_{l \in \delta_E} EC_l(\delta, \delta_E) (g_i(l)-g_l(l)) \leq \sum_{l \in \delta_E} SC_l(T) (g_i(l)-g_l(l))$. But then from the conservation of sum of work and cheap gets, $w_E \geq W(T)$.
+\end{proof}
+
+\begin{theorem}
+(Tightness) Suppose that $\delta, e_0 \Downarrow \delta_E, e_E, w_E, s_E$. Then, for some $n$, there exists a transition sequence $T$ from $s_0 = sign(\delta), e_0 \to^n s_n, e_n$ with $2W(T) \geq w_E$.
+\end{theorem}
+
+\begin{proof}
+By induction on the rules of the evaluational dynamics. We present the construction for the most interesting case, fork-join.
+\\
+
+\noindent\textbf{Case fork-join}: Suppose $e_0 = (e_L || e_R)$ and
+$$\delta, e_L \Downarrow \delta_L, v_L, w_L, s_L$$
+$$\delta, e_R \Downarrow \delta_R, v_R, w_R, s_R$$
+which gives us
+$$\delta, (e_L || e_R) \Downarrow \delta', (v_1 || v_2), w_L + w_R + w'$$
+
+From the IH, there exists transition sequence $T_L$ taking $s^L_0, e^L_0 \to^m s^L_m, e^L_m$ with $s^L_0 = sign(\delta)$, $e^L_0 = e_L$, $e^L_m = v_L$ and $2W(T_L) \geq w_L$. Similarly, there exists transition sequence $T_R$ taking $s^R_0, e^R_0 \to^n s^R_n, e^R_n$ with $s^R_0 = sign(\delta)$, $e^R_0 = e_R$, $e^R_n = v_R$ and $2W(T_R) \geq w_R$. 
+
+The function \func{cheap-gets} computes the number of gets to a \farray{} on a particular side of the fork.
+$$\text{\func{cheap-gets}}((s, c), (s_{\text{my}}, c_{\text{my}}), (s_{\text{oth}}, c_{\text{oth}})) = s_{\text{oth}} (c_{\text{my}} - c)$$
+$c_L$ represents the extra costs of gets on the left fork that become expensive (because of sets on the right fork). Similarly, $c_R$ represents the extra costs of gets on the right fork that become expensive (because of sets on the left fork).
+$$c_L = \sum_{l \in L(\delta), \delta[l \mapsto (+, c)]} \text{\func{cheap-gets}}(\delta[l], \delta_L[l], \delta_R[l]) (g_i(l) - g_l(l))$$
+$$c_R = \sum_{l \in L(\delta), \delta[l \mapsto (+, c)]} \text{\func{cheap-gets}}(\delta[l], \delta_R[l], \delta_L[l]) (g_i(l) - g_l(l))$$
+The function \func{double-sets} computes whether a \farray{} was set on both sides of the fork-join.
+$$\text{\func{double-sets}}((s_L, c_L), (s_R, c_R)) = s_L s_R$$
+$$ss = \sum_{l \in L(\delta), \delta[l \mapsto (+, c)]} \text{\func{double-sets}}(\delta_L[l], \delta_R[l])s_i(l)$$
+
+If $c_R \geq c_L$ then we step the left side of the fork to completion before the right side of the fork. If $c_L > c_R$ then we step the right side of the fork to completion before the left side. We can then show that the resulting transition sequence $T$ satisfies $2W(T) \geq w_E$.
+
+WLOG suppose $c_R \geq c_L$. In the evaluational dynamics, $w' = c_L + c_R + ss$. Because we step the left side of the fork before the right side, and $c_R \geq c_L$, $2W(T) \geq 2(W(T_L) + W(T_R) + c_R + ss) \geq 2W(T_L) + 2W(T_R) + c_R + c_L + ss \geq w_L + w_R + c_L + c_R + ss \geq w_L + w_R + w'$.
+
+\end{proof}
+
+\begin{theorem}
+(Conditional termination) Suppose that $\delta, e_0 \Downarrow \delta_E, e_E, w_E, s_E$. Then there exists $n$ s.t. all transition sequences starting at $sign(\delta), e_0$ have length $\leq n$.
+\end{theorem}
+
+\begin{proof}
+By induction on the rules of the evaluational dynamics.
+\end{proof}
+
+When evaluating an expression $e$ in our language, the stores are initially empty. In particular, the signs of the store in the evaluational dynamics and structural dynamics are the same. From the tightness theorem, we know there exists a transition sequence $T$ starting at $e$. From the conditional termination theorem, all transition sequences starting at $e$ have bounded length. Then, from the work bound theorem, the work computed by the evaluational dynamics is at least the work of any transition sequence. Since the structural dynamics captures the (non-deterministic) execution time of the expression, this means that the evaluational dynamics gives an upper bound for the execution time of the expression.
+
